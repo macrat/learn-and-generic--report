@@ -8,3 +8,5 @@ ${STUDENT_ID}.tar.gz: $(shell ls */*.c)
 clean:
 	-rm */a.out
 	-rm ${STUDENT_ID}.tar.gz
+	-rm BP/learning.log
+	-rm BP/error.png
