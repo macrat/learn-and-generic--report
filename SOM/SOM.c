@@ -17,59 +17,46 @@
 #define delta_fin 0.5  /* δの最終値 */
 
 
-/********************************************************************
-	乱数の発生 (Seedの決定)
-********************************************************************/
-void init_rnd()
-{
-	srand((unsigned int)time(NULL));
-}
+/** 重みの初期化
+ * 重みの配列を0から1の乱数で初期化する。
+ *
+ * weight[i][j][k]: 初期化したい重みの配列。。
+ */
+void init_w(double weight[MapUnitNo][MapUnitNo][InputUnitNo]){
+	int i, j, k;
 
-/********************************************************************
-	乱数の発生 (0〜1の乱数)
-********************************************************************/
-double Random()
-{
-	return((double)rand()/RAND_MAX);
-}
-
-/********************************************************************
-	重みの初期化
-		引数 w[i][j][k] : 重みベクトル (マップ層のニューロン(i,j)と入力層のニューロンkの結合)
-********************************************************************/
-void init_w(double w[MapUnitNo][MapUnitNo][InputUnitNo])
-{
-	int i,j,k;
-
-	/* 乱数の初期化 */
-	init_rnd();
+	srand((unsigned int)time(NULL));  /* 乱数生成器を初期化。 */
 	
-	/* 重みの初期値を0〜1の乱数に設定 */
-
-	/*** この部分を自分で書く	***/
-
+	for(i=0; i<MapUnitNo; i++){
+		for(j=0; j<MapUnitNo; j++){
+			for(k=0; k<MapUnitNo; k++){
+				weight[i][j][k] = (double)rand() / RAND_MAX; 
+			}
+		}
+	}
 }
 
-/********************************************************************
-	 学習データの読み込み	
-		 引数 fname			 : ファイル名
-			data[p][i]	: 学習データ (パターンpのi番目の成分) 
-*********************************************************************/
+
+/** 学習するデータを読み込む
+ *
+ * fname: 読み込むファイルの名前。
+ * data: 読み込んだデータを格納する配列。
+ */
 void read_data(char *fname, double data[PatternNo][InputUnitNo])
 {
-	int k,p;
+	int k, p;
 	FILE *fp;
 	
 	/* ファイル fname をオープン */
-	if((fp=fopen(fname,"r"))==NULL){
-		printf("Cannot open \"%s\"\n",fname);
+	if((fp = fopen(fname,"r")) == NULL){
+		printf("Cannot open \"%s\"\n", fname);
 		exit(1);
 	}
 	
 	/* データの読み込み	*/
-	for(p=0;p<PatternNo;p++){
-		for(k=0;k<InputUnitNo;k++){
-			fscanf(fp,"%lf ",&data[p][k]);
+	for(p=0; p<PatternNo; p++){
+		for(k=0; k<InputUnitNo; k++){
+			fscanf(fp, "%lf ", &data[p][k]);
 		}
 	}
 
@@ -77,88 +64,79 @@ void read_data(char *fname, double data[PatternNo][InputUnitNo])
 	fclose(fp);
 }
 
-/********************************************************************
-	学習係数αの計算
-		 引数 min_i : 勝ちニューロンの座標 i
-			min_j : 勝ちニューロンの座標 j
-			i		 : ニューロンの座標 i 
-			j		 : ニューロンの座標 j 
-			t		 : 学習回数 t 
-********************************************************************/
-double alpha_t(int min_i, int min_j, int i, int j, double t) 
+
+/** 距離の計算
+ * 入力と重みとの距離を計算する。
+ *
+ * weight[i][j][k]: 重みベクトル。マップ層のニューロン(i,j)と入力層のニューロンkとの結合重みを表わす。
+ * input: 入力データ。
+ * distance: 計算した距離を出力する配列。
+ */
+void calc_distance(double weight[MapUnitNo][MapUnitNo][InputUnitNo], 
+					double input[InputUnitNo],
+					double distance[MapUnitNo][MapUnitNo])
 {
-	/*** 学習係数 α(t)の計算 ***/
+	int i, j, k;
 
-	/*** この部分を自分で書く ***/
-
+	for(i=0; i<MapUnitNo; i++){
+		for(j=0; j<MapUnitNo; j++){
+			distance[i][j] = 0;
+			for(k=0; k<MapUnitNo; k++){
+				distance[i][j] += (weight[i][j][k] - input[k]) * (weight[i][j][k] - input[k]);
+			}
+		}
+	}
 }
 
-/********************************************************************
-	距離の計算
-		 引数 w[i][j][k]		 : 重みベクトル (マップ層のニューロン(i,j)と入力層のニューロンkの結合)
-				data[p][k]		 : 学習データ (パターンpのk番目の成分) 
-				distance[i][j] : マップ層のニューロン(i,j)に結合する重みと入力パターンとの距離
-				p							: パターン番号
-********************************************************************/
-void calc_distance(double w[MapUnitNo][MapUnitNo][InputUnitNo], 
-			 double data[PatternNo][InputUnitNo],
-			 double distance[MapUnitNo][MapUnitNo],int p)
-{
-	int i,j,k;
 
-	/* 入力パターンdata[p][k]とマップ層のニューロンに結合する重み
-		 w[i][j][k]の距離 distance[i][j]を計算する								 */ 
+/** 勝ちニューロンを見付ける
+ *
+ * distance: マップ層に結合する重みと入力パターンとの距離。
+ * min_i: 勝ちニューロンの座標iを格納する変数へのポインタ。
+ * min_j: 勝ちニューロンの座標jを格納する変数へのポインタ。
+ */
+void find_winner(double distance[MapUnitNo][MapUnitNo], int *min_i, int *min_j){
+	int i, j;
+	double min = distance[0][0];
 
-	/*** この部分を自分で書く ***/
-
+	for(i=0; i<MapUnitNo; i++){
+		for(j=0; j<MapUnitNo; j++){
+			if(min > distance[i][j]){
+				*min_i = i;
+				*min_j = j;
+			}
+		}
+	}
 }
 
-/********************************************************************
-	勝ちニューロンの決定
-		 引数 distance[i][j] : マップ層のニューロン(i,j)に結合する重みと入力パターンとの距離
-				min_i					: 勝ちニューロンの座標i 
-				min_j					: 勝ちニューロンの座標j 
-********************************************************************/
-void find_winner(double distance[MapUnitNo][MapUnitNo], 
-		 int *min_i, int *min_j)
-{
-	int i,j;
-	double min;
 
-	/* 入力パターンとマップ層のニューロンに結合する重みの距離
-		 distance[i][j] が最小となるニューロンを見つけ、i,j の値を
-		 *min_i, *min_j に保存																		*/ 
-
-	/*** この部分を自分で書く ***/
-
-}
-
-/********************************************************************
-	学習
-		 引数 w[i][j][k]		 : 重みベクトル (マップ層のニューロン(i,j)と入力層のニューロンkの結合)
-				data[p][k]		 : 学習データ (パターンpのk番目の成分) 
-********************************************************************/
-void training(double w[MapUnitNo][MapUnitNo][InputUnitNo], 
-				double data[PatternNo][InputUnitNo])
-{
+/** 与えられたデータを学習する
+ *
+ * weight: 重みベクトル。
+ * input: 学習するデータ。
+ */
+void training(double weight[MapUnitNo][MapUnitNo][InputUnitNo], double input[PatternNo][InputUnitNo]){
 	double distance[MapUnitNo][MapUnitNo];	/* 距離 */
-	int min_i,min_j;												/* 勝ちニューロンの座標 */ 
-	int i,j,k;
+	int min_i, min_j;  /* 勝ちニューロンの座標 */
+	int i, j, k;
 	int t;
 	int p;
 	
-	for(t=0;t<TrainingNo;t++){
-		for(p=0;p<PatternNo;p++){
-			/* 距離の計算 */
-			calc_distance(w,data,distance,p);
-			/* 勝ちニューロンを見つける */
-			find_winner(distance,&min_i,&min_j);
+	for(t=0; t<TrainingNo; t++){
+		for(p=0; p<PatternNo; p++){
+			calc_distance(weight, input[p], distance);  /* 距離の計算 */
+			find_winner(distance, &min_i, &min_j);  /* 勝ちニューロンを見つける */
+
 			/* 重みの更新 */
-
-			/*** この部分を自分で書く ***/
-
+			for(i=0; i<MapUnitNo; i++){
+				for(j=0; j<MapUnitNo; j++){
+					for(k=0; k<InputUnitNo; k++){
+						weight[i][j][k] = weight[i][j][k] + alpha * (-(i-min_i)*(i-min_i) + (j-min_j)*(j-min_j))/(delta_ini * pow(delta_fin/delta_ini, t/TrainingNo));
+					}
+				}
+			}
 		}
-		fprintf(stderr,"\r %d/%d",t,TrainingNo);
+		fprintf(stderr, "\r %d/%d", t, TrainingNo);
 	}
 	printf("\n");
 }
@@ -168,10 +146,7 @@ void training(double w[MapUnitNo][MapUnitNo][InputUnitNo],
 		 引数 w[i][j][k]		 : 重みベクトル (マップ層のニューロン(i,j)と入力層のニューロンkの結合)
 				data[p][k]		 : 学習データ (パターンpのk番目の成分) 
 ********************************************************************/
-void exec(double w[MapUnitNo][MapUnitNo][InputUnitNo], 
-		double data[PatternNo][InputUnitNo]
-)
-{
+void exec(double w[MapUnitNo][MapUnitNo][InputUnitNo], double data[PatternNo][InputUnitNo]){
 	char *animal[PatternNo+1] = {
 			"  dove","  hen ","	duck"," goose","  owl ",
 			"  hawk"," eagle","  fox ","  dog ","  wolf", 
@@ -180,33 +155,30 @@ void exec(double w[MapUnitNo][MapUnitNo][InputUnitNo],
 		};
 	double distance[MapUnitNo][MapUnitNo]; /* 距離 */
 	int result[MapUnitNo][MapUnitNo];  /* マップ層ニューロンの表すパターン */
-	int min_i,min_j;  /* 勝ちニューロンの座標 */ 
-	int i,j;
+	int min_i, min_j;  /* 勝ちニューロンの座標 */ 
+	int i, j;
 	int p;
 
-	for(i=0;i<MapUnitNo;i++){
-		for(j=0;j<MapUnitNo;j++){
-			result[i][j]=PatternNo;
+	for(i=0; i<MapUnitNo; i++){
+		for(j=0; j<MapUnitNo; j++){
+			result[i][j] = PatternNo;
 		}
 	}
-	for(p=0;p<PatternNo;p++){
-		/* 距離の計算 */
-		calc_distance(w,data,distance,p);
-		/* 勝ちニューロンを見つける */
-		find_winner(distance,&min_i,&min_j);
-		/* 表示用データの格納 */	 
-		result[min_i][min_j]=p;
+	for(p=0; p<PatternNo; p++){
+		calc_distance(w, data[p], distance);  /* 距離の計算 */
+		find_winner(distance, &min_i, &min_j);  /* 勝ちニューロンを見つける */
+		result[min_i][min_j] = p;  /* 表示用データの格納 */
 	}
+
 	/* 表示 */	 
 	printf("\n");
-	for(i=0;i<MapUnitNo;i++){
-		for(j=0;j<MapUnitNo;j++){
-			printf("%s",animal[result[i][j]]);
+	for(i=0; i<MapUnitNo; i++){
+		for(j=0; j<MapUnitNo; j++){
+			printf("%s", animal[result[i][j]]);
 		}
 		printf("\n");
 	}
 }
-
 
 
 /********************************************************************
