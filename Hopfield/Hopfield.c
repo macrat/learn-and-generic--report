@@ -71,13 +71,13 @@ void display_pattern(const int out[PATTERN_SIZE]){
 void read_pattern(const char *fname, int dest[PATTERN_SIZE]){
 	int i;
 	FILE *fp;
-				
+
 	/* ファイル fname をオープン */
 	if((fp = fopen(fname,"r")) == NULL){
 		printf("read_pattern(): Cannot open \"%s\"\n", fname);
 		exit(1);
 	}
-				
+
 	/* データの読み込み */
 	for(i=0; i<PATTERN_SIZE; i++){
 		fscanf(fp, "%d", &dest[i]);
