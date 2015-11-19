@@ -1,2 +1,4 @@
 syntax: glob
+a.out
 *.tar.gz
+BP/error.dat

@@ -41,8 +41,7 @@ double SigmoidFunc(double net)
 {
   /* 内部状態(net)に対するシグモイド関数の値を返す */
 
-  /*** この部分を自分で書く  ***/
-
+	return 1 / (1 + exp(-net));
 }
 
 /********************************************************************
@@ -97,13 +96,20 @@ void init_w(double v[HiddenUnitNo][InputUnitNo+1],
   
   /* 入力層から中間層への重みv[j][i]を-0.5〜0.5の乱数で初期化 */
 
-  /*** この部分を自分で書く  ***/
+	for(j=0; j<HiddenUnitNo; j++){
+		for(i=0; i<InputUnitNo; i++){
+			v[j][i] = Random() - 0.5;
+		}
+	}
 
   
   /* 中間層から出力層への重みw[k][j]を-0.5〜0.5の乱数で初期化 */
 
-  /*** この部分を自分で書く  ***/
-
+	for(k=0; k<OutputUnitNo; k++){
+		for(j=0; j<HiddenUnitNo; j++){
+			w[k][j] = Random() - 0.5;
+		}
+	}
 }
 
 /********************************************************************
@@ -132,28 +138,33 @@ void forward_propagation(int p,
   PatternIn[p][InputUnitNo]=1.0;
 
   /* 中間層のニューロンの内部状態を計算 */
-
-  /*** この部分を自分で書く  ***/
-
+  for(i=0; i<HiddenUnitNo; i++){
+	  h_net[i] = 0;
+	  for(j=0; j<InputUnitNo+1; j++){
+		  h_net[i] += v[i][j] * PatternIn[p][j];
+	  }
+  }
 
   /* 中間層のニューロンの出力を計算 */
-
-  /*** この部分を自分で書く  ***/
-
+  for(i=0; i<HiddenUnitNo; i++){
+	  h_out[i] = SigmoidFunc(h_net[i]);
+  }
 
   /* 中間層の常に1を出力するニューロンの出力を設定 (閾値の分) */
   h_out[HiddenUnitNo]=1.0;
 
   /* 出力層のニューロンの内部状態を出力を計算 */
-
-  /*** この部分を自分で書く  ***/
-
+  for(i=0; i<OutputUnitNo; i++){
+	  o_net[i] = 0;
+	  for(j=0; j<HiddenUnitNo+1; j++){
+		  o_net[i] += w[i][j] * h_out[j];
+	  }
+  }
 
   /* 出力層のニューロンの出力を計算 */
-
-  /*** この部分を自分で書く  ***/
-
-
+  for(i=0; i<OutputUnitNo; i++){
+	  o_out[i] = SigmoidFunc(o_net[i]);
+  }
 }
 
 /********************************************************************
@@ -179,15 +190,25 @@ void back_propagation(int p,
   int i,j,k;
 
   /* 中間層から出力層への重みw[k][j]の更新 */
+  for(k=0; k<OutputUnitNo; k++){
+	  for(j=0; j<HiddenUnitNo+1; j++){
+		  w[k][j] = w[k][j] - (o_out[k] - PatternOut[p][k]) * o_out[k] * (1 - o_out[k]) * h_out[j];
+	  }
+  }
 
-  /*** この部分を自分で書く  ***/
-
-  
   /* 入力層から中間層への重みv[j][i]の更新 */
+  for(j=0; j<HiddenUnitNo; j++){
+	  for(i=0; i<InputUnitNo+1; i++){
+		  int old = v[j][i];
 
-  /*** この部分を自分で書く  ***/
-
-  
+		  v[j][i] = 0;
+		  for(k=0; k<OutputUnitNo; k++){
+			  v[j][i] += (o_out[k] - PatternOut[p][k]) * o_out[k] * (1 - o_out[k]) * w[k][j];
+		  }
+		  v[j][i] *= h_out[j] * (1 - h_out[j]) * PatternIn[p][i];
+		  v[j][i] += old;
+	  }
+  }
 }
 
 /********************************************************************
@@ -235,9 +256,9 @@ int main(int argc, char *argv[])
       back_propagation(p,v,w,h_out,o_out,PatternIn,PatternOut);
       /* パターンpに対する誤差の計算 (errorに加算) */
 
-      /*** この部分を自分で書く  ***/
-
-
+		for(k=0; k<OutputUnitNo; k++){
+			error += ((o_out[k] - PatternOut[p][k]) * (o_out[k] - PatternOut[p][k])) / 2;
+		}
     }
     t++; /* 学習回数を1進める */
     fprintf(fp,"%d %f\n",t,error); /* 誤差(error)をファイルに書き込む */
@@ -257,13 +278,12 @@ int main(int argc, char *argv[])
      [3] 1.0 1.0 ==> 0.035 (0.000)
   */
 
-  /*** この部分を自分で書く  ***/
+  for(p=0; p<PatternNo; p++){
+	  forward_propagation(p, v, w, PatternIn, h_out, o_out);
+
+	  printf("[%d] %lf %lf ===> %lf (%lf)\n", p, PatternIn[p][0], PatternIn[p][1], o_out[0], PatternOut[p][0]);
+  }
 
   
   return(0);
 }
-
-
-
-
-
