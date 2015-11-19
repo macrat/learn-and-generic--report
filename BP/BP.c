@@ -11,10 +11,10 @@
 #define HiddenUnitNo 2   /* 中間層のニューロン数 */
 #define OutputUnitNo 1   /* 出力層のニューロン数 */
 
-#define Eta 0.1          /* 学習係数 η */
+#define Eta 0.2          /* 学習係数 η */
 #define PatternNo 4      /* パターン数 */
 
-#define TrainingNo 20000  /* 学習回数 */
+#define TrainingNo 1000000  /* 学習回数 */
 #define ErrorMax   0.001  /* 許容する誤差の最大値 */
 
 /********************************************************************
@@ -135,35 +135,35 @@ void forward_propagation(int p,
   double o_net[OutputUnitNo]; /* 出力層ニューロンの内部状態 */
 
   /* 入力層の常に1を出力するニューロンのための入力を設定 (閾値の分) */
-  PatternIn[p][InputUnitNo]=1.0;
+  PatternIn[p][InputUnitNo] = 1.0;
 
   /* 中間層のニューロンの内部状態を計算 */
-  for(i=0; i<HiddenUnitNo; i++){
-	  h_net[i] = 0;
-	  for(j=0; j<InputUnitNo+1; j++){
-		  h_net[i] += v[i][j] * PatternIn[p][j];
+  for(j=0; j<HiddenUnitNo; j++){
+	  h_net[j] = 0;
+	  for(i=0; i<InputUnitNo+1; i++){
+		  h_net[j] += v[j][i] * PatternIn[p][i];
 	  }
   }
 
   /* 中間層のニューロンの出力を計算 */
-  for(i=0; i<HiddenUnitNo; i++){
-	  h_out[i] = SigmoidFunc(h_net[i]);
+  for(j=0; j<HiddenUnitNo; j++){
+	  h_out[j] = SigmoidFunc(h_net[j]);
   }
 
   /* 中間層の常に1を出力するニューロンの出力を設定 (閾値の分) */
-  h_out[HiddenUnitNo]=1.0;
+  h_out[HiddenUnitNo] = 1.0;
 
   /* 出力層のニューロンの内部状態を出力を計算 */
-  for(i=0; i<OutputUnitNo; i++){
-	  o_net[i] = 0;
+  for(k=0; k<OutputUnitNo; k++){
+	  o_net[k] = 0;
 	  for(j=0; j<HiddenUnitNo+1; j++){
-		  o_net[i] += w[i][j] * h_out[j];
+		  o_net[k] += w[k][j] * h_out[j];
 	  }
   }
 
   /* 出力層のニューロンの出力を計算 */
-  for(i=0; i<OutputUnitNo; i++){
-	  o_out[i] = SigmoidFunc(o_net[i]);
+  for(k=0; k<OutputUnitNo; k++){
+	  o_out[k] = SigmoidFunc(o_net[k]);
   }
 }
 
@@ -191,21 +191,21 @@ void back_propagation(int p,
 
   /* 中間層から出力層への重みw[k][j]の更新 */
   for(k=0; k<OutputUnitNo; k++){
-	  for(j=0; j<HiddenUnitNo+1; j++){
-		  w[k][j] = w[k][j] - (o_out[k] - PatternOut[p][k]) * o_out[k] * (1 - o_out[k]) * h_out[j];
+	  for(j=0; j<HiddenUnitNo; j++){
+		  w[k][j] = w[k][j] - Eta * (o_out[k] - PatternOut[p][k]) * o_out[k] * (1 - o_out[k]) * h_out[j];
 	  }
   }
 
   /* 入力層から中間層への重みv[j][i]の更新 */
   for(j=0; j<HiddenUnitNo; j++){
-	  for(i=0; i<InputUnitNo+1; i++){
-		  int old = v[j][i];
+	  for(i=0; i<InputUnitNo; i++){
+		  double old = v[j][i];
 
 		  v[j][i] = 0;
 		  for(k=0; k<OutputUnitNo; k++){
-			  v[j][i] += (o_out[k] - PatternOut[p][k]) * o_out[k] * (1 - o_out[k]) * w[k][j];
+			  v[j][i] -= (o_out[k] - PatternOut[p][k]) * o_out[k] * (1 - o_out[k]) * w[k][j];
 		  }
-		  v[j][i] *= h_out[j] * (1 - h_out[j]) * PatternIn[p][i];
+		  v[j][i] *= Eta * h_out[j] * (1 - h_out[j]) * PatternIn[p][i];
 		  v[j][i] += old;
 	  }
   }
