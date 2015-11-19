@@ -14,6 +14,8 @@
 #define TRAINING_COUNT_MAX 1000000  /* 学習回数 */
 #define MINIMAL_ERROR_LEVEL 0.001  /* 許容する誤差の最大値 */
 
+#define LOGFILE_NAME "learning.log"  /* ログファイルの名前 */
+
 
 /** 出力関数
  *
@@ -196,9 +198,9 @@ int main(int argc, char *argv[]){
 		exit(1);
 	}
 
-	/* ファイル error.dat をオープン */
-	if((log_file = fopen("error.dat","weight_h2o")) == NULL){
-		printf("main(): Cannot open \"error.dat\"\n");
+	/* ログファイルをオープン */
+	if((log_file = fopen(LOGFILE_NAME, "weight_h2o")) == NULL){
+		printf("main(): Cannot open \"%s\"\n", LOGFILE_NAME);
 		exit(1);
 	}
 

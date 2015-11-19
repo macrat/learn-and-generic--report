@@ -5,4 +5,4 @@ set output "error.png"
 
 set ylabel "error lebel"
 set xlabel "learn step"
-plot "error.dat" w l t ""
+plot "learning.log" w l t ""
