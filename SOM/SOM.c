@@ -82,8 +82,9 @@ void calc_distance(double weight[MapUnitNo][MapUnitNo][InputUnitNo],
 		for(j=0; j<MapUnitNo; j++){
 			distance[i][j] = 0;
 			for(k=0; k<MapUnitNo; k++){
-				distance[i][j] += (weight[i][j][k] - input[k]) * (weight[i][j][k] - input[k]);
+				distance[i][j] += pow(weight[i][j][k] - input[k], 2);
 			}
+			distance[i][j] = sqrt(distance[i][j]);
 		}
 	}
 }
@@ -99,11 +100,14 @@ void find_winner(double distance[MapUnitNo][MapUnitNo], int *min_i, int *min_j){
 	int i, j;
 	double min = distance[0][0];
 
+	*min_i = *min_j = 0;
+
 	for(i=0; i<MapUnitNo; i++){
 		for(j=0; j<MapUnitNo; j++){
 			if(min > distance[i][j]){
 				*min_i = i;
 				*min_j = j;
+				min = distance[i][j];
 			}
 		}
 	}
@@ -131,14 +135,17 @@ void training(double weight[MapUnitNo][MapUnitNo][InputUnitNo], double input[Pat
 			for(i=0; i<MapUnitNo; i++){
 				for(j=0; j<MapUnitNo; j++){
 					for(k=0; k<InputUnitNo; k++){
-						weight[i][j][k] = weight[i][j][k] + alpha * (-(i-min_i)*(i-min_i) + (j-min_j)*(j-min_j))/(delta_ini * pow(delta_fin/delta_ini, t/TrainingNo));
+						weight[i][j][k] += alpha * exp(-(pow(i-min_i, 2) + pow(j-min_j, 2)) / pow(delta_ini * pow(delta_fin/delta_ini, (double)t/TrainingNo), 2)) * (input[p][k] - weight[i][j][k]);
 					}
 				}
 			}
 		}
-		fprintf(stderr, "\r %d/%d", t, TrainingNo);
+		if(t%10 == 9){
+			printf("\r %d/%d", t+1, TrainingNo);
+			fflush(stdout);
+		}
 	}
-	printf("\n");
+	printf("\r\n");
 }
 
 /********************************************************************
@@ -148,7 +155,7 @@ void training(double weight[MapUnitNo][MapUnitNo][InputUnitNo], double input[Pat
 ********************************************************************/
 void exec(double w[MapUnitNo][MapUnitNo][InputUnitNo], double data[PatternNo][InputUnitNo]){
 	char *animal[PatternNo+1] = {
-			"  dove","  hen ","	duck"," goose","  owl ",
+			"  dove","  hen ","  duck"," goose","  owl ",
 			"  hawk"," eagle","  fox ","  dog ","  wolf", 
 			"  cat "," tiger","  lion"," horse"," zebra",
 			"  cow ","  ・  "
@@ -191,7 +198,7 @@ int main(int argc, char *argv[])
  
 
 	/* 引数の数の確認 (引数の数が正しくないときは実行方法を表示) */
-	if(argc!=2){
+	if(argc <= 1){
 		printf("Usage : ./a.out training_data\n");
 		exit(1);
 	}
@@ -199,9 +206,9 @@ int main(int argc, char *argv[])
 	read_data(argv[1],data);  /* 学習データの読み込み */ 
 
 	init_w(w);  /* 重みの初期化 */
-	exec(w,data);  /* 実行 */
-	training(w,data);  /* 学習 */
-	exec(w,data);  /* 実行 */
+	exec(w, data);  /* 実行 */
+	training(w, data);  /* 学習 */
+	exec(w, data);  /* 実行 */
 
 	return 0;
 }
