@@ -10,6 +10,7 @@
 #define LOOP_NUM 20  /* 世代数 */
 
 #define LOGFILE_NAME "result.log"  /* 課題用のログファイルの名前。 */
+#define ADVANCE_LOG_NAME "advance.log"  /* 拡張ログのファイル名。 */
 
 
 /** ランダムな遺伝子を作る
@@ -228,6 +229,7 @@ int main(int argc, char** argv){
 	int next[GENE_NUM][GENE_LENGTH];
 	int i, j;
 	FILE* log_file = fopen(LOGFILE_NAME, "w");
+	FILE* adv_log_file = fopen(ADVANCE_LOG_NAME, "w");
 
 	srand(time(NULL));  /* 乱数生成器の初期化 */
 
@@ -236,6 +238,7 @@ int main(int argc, char** argv){
 	printf("\n");
 
 	fprintf(log_file, "0 %lf %lf\n", (double)sum_fitness(genes)/GENE_NUM, (double)calc_fitness(find_max_fitness(genes)));
+	fprintf(adv_log_file, "%lf %lf %lf\n", (double)sum_fitness(genes)/GENE_NUM, (double)calc_fitness(find_max_fitness(genes)), (double)calc_fitness(find_min_fitness(genes)));
 
 	for(i=0; i<LOOP_NUM; i++){
 		/* 次の世代の遺伝子を生成する。 */
@@ -254,6 +257,7 @@ int main(int argc, char** argv){
 		printf("\n");
 
 		fprintf(log_file, "%d %lf %lf\n", i+1, (double)sum_fitness(genes)/GENE_NUM, (double)calc_fitness(find_max_fitness(genes)));
+		fprintf(adv_log_file, "%lf %lf %lf\n", (double)sum_fitness(genes)/GENE_NUM, (double)calc_fitness(find_max_fitness(genes)), (double)calc_fitness(find_min_fitness(genes)));
 	}
 
 	fclose(log_file);
