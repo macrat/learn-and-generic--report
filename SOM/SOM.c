@@ -29,7 +29,7 @@ void init_w(double weight[MapUnitNo][MapUnitNo][InputUnitNo]){
 	
 	for(i=0; i<MapUnitNo; i++){
 		for(j=0; j<MapUnitNo; j++){
-			for(k=0; k<MapUnitNo; k++){
+			for(k=0; k<InputUnitNo; k++){
 				weight[i][j][k] = (double)rand() / RAND_MAX; 
 			}
 		}
@@ -203,7 +203,7 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-	read_data(argv[1],data);  /* 学習データの読み込み */ 
+	read_data(argv[1], data);  /* 学習データの読み込み */ 
 
 	init_w(w);  /* 重みの初期化 */
 	exec(w, data);  /* 実行 */
