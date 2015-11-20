@@ -268,30 +268,42 @@ int main(int argc, char** argv){
 	srand(time(NULL));  /* 乱数生成器の初期化 */
 
 	make_genes(genes);  /* 第一世代を生成 */
-	show_generation(genes);  /* 作った世代を表示する */
+	show_generation((const int (*)[GENE_LENGTH])genes);  /* 作った世代を表示する */
 	printf("\n");
 
-	fprintf(log_file, "0 %lf %lf\n", (double)sum_fitness(genes)/GENE_NUM, (double)calc_fitness(find_max_fitness(genes)));
-	fprintf(adv_log_file, "%lf %lf %lf\n", (double)sum_fitness(genes)/GENE_NUM, (double)calc_fitness(find_max_fitness(genes)), (double)calc_fitness(find_min_fitness(genes)));
+	fprintf(log_file, "0 %lf %lf\n",
+			(double)sum_fitness((const int (*)[GENE_LENGTH])genes)/GENE_NUM,
+			(double)calc_fitness(find_max_fitness((const int (*)[GENE_LENGTH])genes)));
+
+	fprintf(adv_log_file, "%lf %lf %lf\n",
+			(double)sum_fitness((const int (*)[GENE_LENGTH])genes)/GENE_NUM,
+			(double)calc_fitness(find_max_fitness((const int (*)[GENE_LENGTH])genes)),
+			(double)calc_fitness(find_min_fitness((const int (*)[GENE_LENGTH])genes)));
 
 	for(i=0; i<LOOP_NUM; i++){
 		/* 次の世代の遺伝子を生成する。 */
 		for(j=1; j<GENE_NUM; j++){
-			cross(choice(genes), choice(genes), next[j]);
+			cross(choice((const int (*)[GENE_LENGTH])genes), choice((const int (*)[GENE_LENGTH])genes), next[j]);
 		}
 
 		mutation(next);  /* 突然変異を起こす。 */
 
-		copy_gene(find_max_fitness(genes), next[0]);  /* 最も優秀な遺伝子を次の世代にコピーする。 */
+		copy_gene(find_max_fitness((const int (*)[GENE_LENGTH])genes), next[0]);  /* 最も優秀な遺伝子を次の世代にコピーする。 */
 
 		memcpy(genes, next, sizeof(genes));  /* 新しい世代をコピーする。 */
 
 		/* 新しく出来た世代の遺伝子を表示。 */
-		show_generation(genes);
+		show_generation((const int (*)[GENE_LENGTH])genes);
 		printf("\n");
 
-		fprintf(log_file, "%d %lf %lf\n", i+1, (double)sum_fitness(genes)/GENE_NUM, (double)calc_fitness(find_max_fitness(genes)));
-		fprintf(adv_log_file, "%lf %lf %lf\n", (double)sum_fitness(genes)/GENE_NUM, (double)calc_fitness(find_max_fitness(genes)), (double)calc_fitness(find_min_fitness(genes)));
+		fprintf(log_file, "%d %lf %lf\n", i+1,
+				(double)sum_fitness((const int (*)[GENE_LENGTH])genes)/GENE_NUM,
+				(double)calc_fitness(find_max_fitness((const int (*)[GENE_LENGTH])genes)));
+
+		fprintf(adv_log_file, "%lf %lf %lf\n",
+				(double)sum_fitness((const int (*)[GENE_LENGTH])genes)/GENE_NUM,
+				(double)calc_fitness(find_max_fitness((const int (*)[GENE_LENGTH])genes)),
+				(double)calc_fitness(find_min_fitness((const int (*)[GENE_LENGTH])genes)));
 	}
 
 	fclose(log_file);
