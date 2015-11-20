@@ -8,7 +8,9 @@
 #define GENE_NUM 5  /* 一世代における遺伝子の数 */
 #define MUTATION_RATE 0.1  /* 突然変異の発生確率。0で起らず、1で一世代毎に全てが反転する。 */
 #define LOOP_NUM 20  /* 世代数 */
+
 #define CROSS_TYPE 1  /* 交差のタイプ。0なら一点交差、1なら二点交差、2ならランダムに交差。 */
+#define CHOICE_TYPE 0  /* 選択のタイプ。0ならルーレット方式、1ならトーナメント方式。 */
 
 #define LOGFILE_NAME "result.log"  /* 課題用のログファイルの名前。 */
 #define ADVANCE_LOG_NAME "advance.log"  /* 拡張ログのファイル名。 */
@@ -84,14 +86,16 @@ int sum_fitness(const int genes[GENE_NUM][GENE_LENGTH]){
 }
 
 
-/** ルーレット方式で個体を一つ選ぶ
+/** 交差に使う個体をランダムに一つ選ぶ
+ * 選択の方法はCHOICE_TYPE定数によって決まる。
  *
  * genes: 遺伝子の一覧。この中からランダムに一つ選ぶ。
  *
  * return: 選ばれた遺伝子へのポインタ。
  */
 int* choice(const int genes[GENE_NUM][GENE_LENGTH]){
-	int select = rand() % sum_fitness(genes);
+#if CHOICE_TYPE == 0
+	const int select = rand() % sum_fitness(genes);
 	int fit = 0;
 	int i;
 
@@ -103,6 +107,22 @@ int* choice(const int genes[GENE_NUM][GENE_LENGTH]){
 	}
 
 	return (int*)genes[i];
+#else
+	const int a = rand()%GENE_NUM;  /* 一つめの候補は適当に決める。 */
+	int b;
+
+	/* 二つめの候補は一つめと被らないように決める。 */
+	do{
+		b = rand()%GENE_NUM;
+	}while(a == b);
+
+	/* 適応度の高い方を選ぶ。 */
+	if(calc_fitness(genes[a]) > calc_fitness(genes[b])){
+		return (int*)genes[a];
+	}else{
+		return (int*)genes[b];
+	}
+#endif
 }
 
 
