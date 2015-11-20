@@ -260,10 +260,18 @@ void show_generation(const int genes[GENE_NUM][GENE_LENGTH]){
 }
 
 
+/** ソート用の比較関数
+ */
+int sort_cmp(const int* a, const int* b){
+	return *b - *a;
+}
+
+
 int main(int argc, char** argv){
 	int genes[GENE_NUM][GENE_LENGTH];
 	int next[GENE_NUM][GENE_LENGTH];
 	int i, j;
+	int fitnesses[GENE_NUM];
 	FILE* log_file = fopen(LOGFILE_NAME, "w");
 	FILE* adv_log_file = fopen(ADVANCE_LOG_NAME, "w");
 
@@ -277,10 +285,13 @@ int main(int argc, char** argv){
 			(double)sum_fitness((const int (*)[GENE_LENGTH])genes)/GENE_NUM,
 			(double)calc_fitness(find_max_fitness((const int (*)[GENE_LENGTH])genes)));
 
-	fprintf(adv_log_file, "%lf %lf %lf\n",
+	calc_fitnesses((const int (*)[GENE_LENGTH])genes, fitnesses);
+	qsort(fitnesses, GENE_NUM, sizeof(int), (int (*)(const void*, const void*))sort_cmp);
+	fprintf(adv_log_file, "%lf %d %d %d\n",
 			(double)sum_fitness((const int (*)[GENE_LENGTH])genes)/GENE_NUM,
-			(double)calc_fitness(find_max_fitness((const int (*)[GENE_LENGTH])genes)),
-			(double)calc_fitness(find_min_fitness((const int (*)[GENE_LENGTH])genes)));
+			fitnesses[0],
+			fitnesses[GENE_NUM-1],
+			fitnesses[GENE_NUM/2]);
 
 	for(i=0; i<LOOP_NUM; i++){
 		/* 次の世代の遺伝子を生成する。 */
@@ -304,10 +315,13 @@ int main(int argc, char** argv){
 				(double)sum_fitness((const int (*)[GENE_LENGTH])genes)/GENE_NUM,
 				(double)calc_fitness(find_max_fitness((const int (*)[GENE_LENGTH])genes)));
 
-		fprintf(adv_log_file, "%lf %lf %lf\n",
+		calc_fitnesses((const int (*)[GENE_LENGTH])genes, fitnesses);
+		qsort(fitnesses, GENE_NUM, sizeof(int), (int (*)(const void*, const void*))sort_cmp);
+		fprintf(adv_log_file, "%lf %d %d %d\n",
 				(double)sum_fitness((const int (*)[GENE_LENGTH])genes)/GENE_NUM,
-				(double)calc_fitness(find_max_fitness((const int (*)[GENE_LENGTH])genes)),
-				(double)calc_fitness(find_min_fitness((const int (*)[GENE_LENGTH])genes)));
+				fitnesses[0],
+				fitnesses[GENE_NUM-1],
+				fitnesses[GENE_NUM/2]);
 	}
 
 #ifndef SHOW_VERBOSE
