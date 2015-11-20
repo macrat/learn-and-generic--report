@@ -12,6 +12,8 @@
 #define CROSS_TYPE 1  /* 交差のタイプ。0なら一点交差、1なら二点交差、2ならランダムに交差。 */
 #define CHOICE_TYPE 0  /* 選択のタイプ。0ならルーレット方式、1ならトーナメント方式。 */
 
+#define SHOW_VERBOSE  /* これが定義されていれば計算過程を表示する。 */
+
 #define LOGFILE_NAME "result.log"  /* 課題用のログファイルの名前。 */
 #define ADVANCE_LOG_NAME "advance.log"  /* 拡張ログのファイル名。 */
 
@@ -292,9 +294,11 @@ int main(int argc, char** argv){
 
 		memcpy(genes, next, sizeof(genes));  /* 新しい世代をコピーする。 */
 
+#ifdef SHOW_VERBOSE
 		/* 新しく出来た世代の遺伝子を表示。 */
 		show_generation((const int (*)[GENE_LENGTH])genes);
 		printf("\n");
+#endif
 
 		fprintf(log_file, "%d %lf %lf\n", i+1,
 				(double)sum_fitness((const int (*)[GENE_LENGTH])genes)/GENE_NUM,
@@ -305,6 +309,11 @@ int main(int argc, char** argv){
 				(double)calc_fitness(find_max_fitness((const int (*)[GENE_LENGTH])genes)),
 				(double)calc_fitness(find_min_fitness((const int (*)[GENE_LENGTH])genes)));
 	}
+
+#ifndef SHOW_VERBOSE
+	/* 計算結果を表示。 */
+	show_generation((const int (*)[GENE_LENGTH])genes);
+#endif
 
 	fclose(log_file);
 
