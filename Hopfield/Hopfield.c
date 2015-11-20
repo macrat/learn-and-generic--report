@@ -195,7 +195,7 @@ int main(int argc, char *argv[]){
 	srand(time(NULL));  /* 乱数生成器の初期化。 */
 
 	read_patterns(pattern);  /* 学習パターンの読み込み。 */
-	learn(pattern, weight);  /* 相関学習 */
+	learn((const int (*)[PATTERN_SIZE])pattern, weight);  /* 相関学習 */
 
 	memcpy(out, pattern[input_id], PATTERN_SIZE * sizeof(int));  /* 入力パターンを出力用の配列にコピーする。 */
 	make_noise(out, noise_level);  /* 入力パターンにノイズを乗せる。 */
@@ -204,7 +204,7 @@ int main(int argc, char *argv[]){
 
 	/* TRY_NUMの回数分だけ想起処理を行なう。 */
 	for(i=0; i<TRY_NUM; i++){
-		remember(weight, out, OUTPUT_LEVEL >= 2);
+		remember((const int (*)[PATTERN_SIZE])weight, out, OUTPUT_LEVEL >= 2);
 
 		if(OUTPUT_LEVEL >= 1){
 			display_pattern(out);  /* 各想起ごとの出力を表示する。 */
