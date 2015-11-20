@@ -16,6 +16,8 @@
 #define delta_ini 3.5  /* δの初期値 */
 #define delta_fin 0.5  /* δの最終値 */
 
+#define LOGFILE_NAME "training.log"
+
 
 /** 重みの初期化
  * 重みの配列を0から1の乱数で初期化する。
@@ -125,11 +127,16 @@ void training(double weight[MapUnitNo][MapUnitNo][InputUnitNo], double input[Pat
 	int i, j, k;
 	int t;
 	int p;
-	
+
+	FILE *fp = fopen(LOGFILE_NAME, "w");
+
 	for(t=0; t<TrainingNo; t++){
+		fprintf(fp, "%d", t);
 		for(p=0; p<PatternNo; p++){
 			calc_distance(weight, input[p], distance);  /* 距離の計算 */
 			find_winner(distance, &min_i, &min_j);  /* 勝ちニューロンを見つける */
+
+			fprintf(fp, " %lf", distance[min_i][min_j]);
 
 			/* 重みの更新 */
 			for(i=0; i<MapUnitNo; i++){
@@ -144,7 +151,9 @@ void training(double weight[MapUnitNo][MapUnitNo][InputUnitNo], double input[Pat
 			printf("\r %d/%d", t+1, TrainingNo);
 			fflush(stdout);
 		}
+		fprintf(fp, "\n");
 	}
+	fclose(fp);
 	printf("\r\n");
 }
 
