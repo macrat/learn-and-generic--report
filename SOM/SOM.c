@@ -84,7 +84,7 @@ void calc_distance(double weight[MapUnitNo][MapUnitNo][InputUnitNo],
 	for(i=0; i<MapUnitNo; i++){
 		for(j=0; j<MapUnitNo; j++){
 			distance[i][j] = 0;
-			for(k=0; k<MapUnitNo; k++){
+			for(k=0; k<InputUnitNo; k++){
 				distance[i][j] += pow(weight[i][j][k] - input[k], 2);
 			}
 			distance[i][j] = sqrt(distance[i][j]);
