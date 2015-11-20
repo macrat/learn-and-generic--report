@@ -214,7 +214,7 @@ int main(int argc, char *argv[]){
 	for(i=0; i<TRAINING_COUNT_MAX && error > MINIMAL_ERROR_LEVEL; i++){
 		error = 0.0; 
 		for(p=0; p<INPUT_PATTERN_NUM; p++){
-			forward_propagation(input[p], weight_i2h, weight_h2o, h_out, o_out);  /* 出力の計算 (前向き計算) */
+			forward_propagation(input[p], (const double (*)[INPUT_NEURON_NUM+1])weight_i2h, (const double (*)[HIDDEN_NEURON_NUM+1])weight_h2o, h_out, o_out);  /* 出力の計算 (前向き計算) */
 			back_propagation(input[p], h_out, o_out, output[p], weight_i2h, weight_h2o);  /* 出力と教師信号を元に学習 (後向き計算) */			 
 
 			/* パターンpに対する誤差の計算 (errorに加算) */
@@ -230,7 +230,7 @@ int main(int argc, char *argv[]){
 
 	/* 計算して結果を出力する。 */
 	for(p=0; p<INPUT_PATTERN_NUM; p++){
-		forward_propagation(input[p], weight_i2h, weight_h2o, h_out, o_out);
+		forward_propagation(input[p], (const double (*)[INPUT_NEURON_NUM+1])weight_i2h, (const double (*)[HIDDEN_NEURON_NUM+1])weight_h2o, h_out, o_out);
 
 		printf("[%d] %lf %lf ===> %lf (%lf)\n", p, input[p][0], input[p][1], o_out[0], output[p][0]);
 	}
