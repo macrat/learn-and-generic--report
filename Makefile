@@ -1,12 +1,22 @@
 STUDENT_ID = C0114265
 
+.PHONY: tar
+tar: ${STUDENT_ID}.tar.gz
 
-${STUDENT_ID}.tar.gz: $(shell ls */*.c)
+.PHONY: all
+all:
+	cd BP && make
+	cd GA && make
+	cd Hopfield && make
+	cd SOM && make
+
+${STUDENT_ID}.tar.gz: $(shell ls */*.c */*.dat */*.plot */Makefile)
 	tar cvzf $@ --exclude a.out --exclude *.log --exclude *.png `ls | grep -v Makefile | grep -v $@`
 
 .PHONY: clean
 clean:
-	-rm */a.out
 	-rm ${STUDENT_ID}.tar.gz
-	-rm */*.log
-	-rm */*.png
+	-cd BP && make clean
+	-cd GA && make clean
+	-cd Hopfield && make clean
+	-cd SOM && make clean
