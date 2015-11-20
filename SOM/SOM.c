@@ -142,7 +142,7 @@ void training(double weight[MAP_SIDE_LENGTH][MAP_SIDE_LENGTH][INPUT_DATA_LENGTH]
 			find_winner(distance, &min_i, &min_j);  /* 勝ちニューロンを見つける */
 
 			fprintf(distance_log, " %lf", distance[min_i][min_j]);
-			fprintf(position_log, " %d", min_i*MAP_SIDE_LENGTH + min_j);
+			fprintf(position_log, " %d %d", min_i, min_j);
 
 			/* 重みの更新 */
 			for(i=0; i<MAP_SIDE_LENGTH; i++){
