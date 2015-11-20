@@ -93,7 +93,9 @@ void read_pattern(const char *fname, int dest[PATTERN_SIZE]){
  * dest: パターンを保存するバッファ。
  */
 void read_patterns(int dest[PATTERN_NUM][PATTERN_SIZE]){
-	for(int i=0; i<sizeof(PATTERN_NAMES)/sizeof(char*); i++){
+	int i;
+
+	for(i=0; i<sizeof(PATTERN_NAMES)/sizeof(char*); i++){
 		read_pattern(PATTERN_NAMES[i], dest[i]);
 	}
 }
