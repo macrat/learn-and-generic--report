@@ -135,7 +135,10 @@ void training(double weight[MAP_SIDE_LENGTH][MAP_SIDE_LENGTH][INPUT_DATA_LENGTH]
 		fprintf(position_log, "%d", t);
 
 		for(p=0; p<INPUT_DATA_NUM; p++){
-			calc_distance(weight, input[p], distance);  /* 距離の計算 */
+			calc_distance(
+					(const double (*)[MAP_SIDE_LENGTH][INPUT_DATA_LENGTH])weight,
+					(const double (*))input[p],
+					distance);  /* 距離の計算 */
 			find_winner(distance, &min_i, &min_j);  /* 勝ちニューロンを見つける */
 
 			fprintf(distance_log, " %lf", distance[min_i][min_j]);
@@ -217,10 +220,10 @@ int main(const int argc, const char *argv[])
 	read_data(argv[1], data);  /* 学習データの読み込み */ 
 
 	init_weight(weight);  /* 重みの初期化 */
-	calc_and_show(weight, data);  /* 学習する前の出力を計算して表示 */
+	calc_and_show((const double (*)[MAP_SIDE_LENGTH][INPUT_DATA_LENGTH])weight, (const double (*)[INPUT_DATA_LENGTH])data);  /* 学習する前の出力を計算して表示 */
 
 	training(weight, data);  /* 学習 */
-	calc_and_show(weight, data);  /* 学習後の出力を計算して表示 */
+	calc_and_show((const double (*)[MAP_SIDE_LENGTH][INPUT_DATA_LENGTH])weight, (const double (*)[INPUT_DATA_LENGTH])data);  /* 学習後の出力を計算して表示 */
 
 	return 0;
 }
