@@ -1,38 +1,35 @@
-﻿/********************************************************************
-	自己組織化特徴マップ (サンプルプログラム)
-********************************************************************/
-#include <stdio.h>
+﻿#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
 #include <limits.h>
 
-#define PatternNo 16  /* データ数 */
-#define InputUnitNo 29  /* 入力層のニューロン数 */
-#define MapUnitNo 10  /* マップ層の1辺のニューロン数 */
-#define TrainingNo 2000  /* 学習回数 */
+#define INPUT_DATA_NUM 16  /* 入力されるデータの数 */
+#define INPUT_DATA_LENGTH 29  /* 入力層のニューロン数 */
+#define MAP_SIDE_LENGTH 10  /* マップ層の1辺のニューロン数 */
+#define TRAINING_NUM 2000  /* 学習回数 */
 
-#define alpha 0.01  /* 学習係数 */
-#define delta_ini 3.5  /* δの初期値 */
-#define delta_fin 0.5  /* δの最終値 */
+#define LEARNING_COEFFICIENT 0.01  /* 学習係数 */
+#define DELTA_INI 3.5  /* δの初期値 */
+#define DELTA_FIN 0.5  /* δの最終値 */
 
-#define DISTANCE_LOGFILE "distance.log"
-#define POSITION_LOGFILE "position.log"
+#define DISTANCE_LOGFILE "distance.log"  /* 発火したマップ層のニューロンと入力の距離を記録するログファイルの名前 */
+#define POSITION_LOGFILE "position.log"  /* 発火したマップ層のニューロンの位置を記録するログファイルの名前 */
 
 
 /** 重みの初期化
  * 重みの配列を0から1の乱数で初期化する。
  *
- * weight[i][j][k]: 初期化したい重みの配列。。
+ * weight: 初期化したい重みの配列。
  */
-void init_w(double weight[MapUnitNo][MapUnitNo][InputUnitNo]){
+void init_weight(double weight[MAP_SIDE_LENGTH][MAP_SIDE_LENGTH][INPUT_DATA_LENGTH]){
 	int i, j, k;
 
 	srand(time(NULL));  /* 乱数生成器を初期化。 */
-	
-	for(i=0; i<MapUnitNo; i++){
-		for(j=0; j<MapUnitNo; j++){
-			for(k=0; k<InputUnitNo; k++){
+
+	for(i=0; i<MAP_SIDE_LENGTH; i++){
+		for(j=0; j<MAP_SIDE_LENGTH; j++){
+			for(k=0; k<INPUT_DATA_LENGTH; k++){
 				weight[i][j][k] = (double)rand() / RAND_MAX; 
 			}
 		}
@@ -45,20 +42,20 @@ void init_w(double weight[MapUnitNo][MapUnitNo][InputUnitNo]){
  * fname: 読み込むファイルの名前。
  * data: 読み込んだデータを格納する配列。
  */
-void read_data(char *fname, double data[PatternNo][InputUnitNo])
+void read_data(const char *fname, double data[INPUT_DATA_NUM][INPUT_DATA_LENGTH])
 {
 	int k, p;
 	FILE *fp;
-	
+
 	/* ファイル fname をオープン */
 	if((fp = fopen(fname,"r")) == NULL){
 		printf("Cannot open \"%s\"\n", fname);
 		exit(1);
 	}
-	
+
 	/* データの読み込み	*/
-	for(p=0; p<PatternNo; p++){
-		for(k=0; k<InputUnitNo; k++){
+	for(p=0; p<INPUT_DATA_NUM; p++){
+		for(k=0; k<INPUT_DATA_LENGTH; k++){
 			fscanf(fp, "%lf ", &data[p][k]);
 		}
 	}
@@ -75,16 +72,17 @@ void read_data(char *fname, double data[PatternNo][InputUnitNo])
  * input: 入力データ。
  * distance: 計算した距離を出力する配列。
  */
-void calc_distance(double weight[MapUnitNo][MapUnitNo][InputUnitNo], 
-					double input[InputUnitNo],
-					double distance[MapUnitNo][MapUnitNo])
-{
+void calc_distance(
+		const double weight[MAP_SIDE_LENGTH][MAP_SIDE_LENGTH][INPUT_DATA_LENGTH], 
+		const double input[INPUT_DATA_LENGTH],
+		double distance[MAP_SIDE_LENGTH][MAP_SIDE_LENGTH]
+){
 	int i, j, k;
 
-	for(i=0; i<MapUnitNo; i++){
-		for(j=0; j<MapUnitNo; j++){
+	for(i=0; i<MAP_SIDE_LENGTH; i++){
+		for(j=0; j<MAP_SIDE_LENGTH; j++){
 			distance[i][j] = 0;
-			for(k=0; k<InputUnitNo; k++){
+			for(k=0; k<INPUT_DATA_LENGTH; k++){
 				distance[i][j] += pow(weight[i][j][k] - input[k], 2);
 			}
 			distance[i][j] = sqrt(distance[i][j]);
@@ -99,14 +97,14 @@ void calc_distance(double weight[MapUnitNo][MapUnitNo][InputUnitNo],
  * min_i: 勝ちニューロンの座標iを格納する変数へのポインタ。
  * min_j: 勝ちニューロンの座標jを格納する変数へのポインタ。
  */
-void find_winner(double distance[MapUnitNo][MapUnitNo], int *min_i, int *min_j){
+void find_winner(double distance[MAP_SIDE_LENGTH][MAP_SIDE_LENGTH], int *min_i, int *min_j){
 	int i, j;
 	double min = distance[0][0];
 
 	*min_i = *min_j = 0;
 
-	for(i=0; i<MapUnitNo; i++){
-		for(j=0; j<MapUnitNo; j++){
+	for(i=0; i<MAP_SIDE_LENGTH; i++){
+		for(j=0; j<MAP_SIDE_LENGTH; j++){
 			if(min > distance[i][j]){
 				*min_i = i;
 				*min_j = j;
@@ -122,8 +120,8 @@ void find_winner(double distance[MapUnitNo][MapUnitNo], int *min_i, int *min_j){
  * weight: 重みベクトル。
  * input: 学習するデータ。
  */
-void training(double weight[MapUnitNo][MapUnitNo][InputUnitNo], double input[PatternNo][InputUnitNo]){
-	double distance[MapUnitNo][MapUnitNo];	/* 距離 */
+void training(double weight[MAP_SIDE_LENGTH][MAP_SIDE_LENGTH][INPUT_DATA_LENGTH], double input[INPUT_DATA_NUM][INPUT_DATA_LENGTH]){
+	double distance[MAP_SIDE_LENGTH][MAP_SIDE_LENGTH];	/* 距離 */
 	int min_i, min_j;  /* 勝ちニューロンの座標 */
 	int i, j, k;
 	int t;
@@ -132,28 +130,28 @@ void training(double weight[MapUnitNo][MapUnitNo][InputUnitNo], double input[Pat
 	FILE *distance_log = fopen(DISTANCE_LOGFILE, "w");
 	FILE *position_log = fopen(POSITION_LOGFILE, "w");
 
-	for(t=0; t<TrainingNo; t++){
+	for(t=0; t<TRAINING_NUM; t++){
 		fprintf(distance_log, "%d", t);
 		fprintf(position_log, "%d", t);
 
-		for(p=0; p<PatternNo; p++){
+		for(p=0; p<INPUT_DATA_NUM; p++){
 			calc_distance(weight, input[p], distance);  /* 距離の計算 */
 			find_winner(distance, &min_i, &min_j);  /* 勝ちニューロンを見つける */
 
 			fprintf(distance_log, " %lf", distance[min_i][min_j]);
-			fprintf(position_log, " %d", min_i*MapUnitNo + min_j);
+			fprintf(position_log, " %d", min_i*MAP_SIDE_LENGTH + min_j);
 
 			/* 重みの更新 */
-			for(i=0; i<MapUnitNo; i++){
-				for(j=0; j<MapUnitNo; j++){
-					for(k=0; k<InputUnitNo; k++){
-						weight[i][j][k] += alpha * exp(-(pow(i-min_i, 2) + pow(j-min_j, 2)) / pow(delta_ini * pow(delta_fin/delta_ini, (double)t/TrainingNo), 2)) * (input[p][k] - weight[i][j][k]);
+			for(i=0; i<MAP_SIDE_LENGTH; i++){
+				for(j=0; j<MAP_SIDE_LENGTH; j++){
+					for(k=0; k<INPUT_DATA_LENGTH; k++){
+						weight[i][j][k] += LEARNING_COEFFICIENT * exp(-(pow(i-min_i, 2) + pow(j-min_j, 2)) / pow(DELTA_INI * pow(DELTA_FIN/DELTA_INI, (double)t/TRAINING_NUM), 2)) * (input[p][k] - weight[i][j][k]);
 					}
 				}
 			}
 		}
 		if(t%10 == 9){
-			printf("\r %d/%d", t+1, TrainingNo);
+			printf("\r %d/%d", t+1, TRAINING_NUM);
 			fflush(stdout);
 		}
 		fprintf(distance_log, "\n");
@@ -164,39 +162,40 @@ void training(double weight[MapUnitNo][MapUnitNo][InputUnitNo], double input[Pat
 	printf("\r\n");
 }
 
-/********************************************************************
-	実行
-		 引数 w[i][j][k]		 : 重みベクトル (マップ層のニューロン(i,j)と入力層のニューロンkの結合)
-				data[p][k]		 : 学習データ (パターンpのk番目の成分) 
-********************************************************************/
-void exec(double w[MapUnitNo][MapUnitNo][InputUnitNo], double data[PatternNo][InputUnitNo]){
-	char *animal[PatternNo+1] = {
+
+/** すべての入力について計算して表示する
+ *
+ * weight: 計算に使用する入力層からマップ層への重みの配列
+ * input: 入力するデータの配列
+ */
+void calc_and_show(const double weight[MAP_SIDE_LENGTH][MAP_SIDE_LENGTH][INPUT_DATA_LENGTH], const double input[INPUT_DATA_NUM][INPUT_DATA_LENGTH]){
+	const char *animal[INPUT_DATA_NUM + 1] = {
 			"  dove","  hen ","  duck"," goose","  owl ",
 			"  hawk"," eagle","  fox ","  dog ","  wolf", 
 			"  cat "," tiger","  lion"," horse"," zebra",
 			"  cow ","  ・  "
 		};
-	double distance[MapUnitNo][MapUnitNo]; /* 距離 */
-	int result[MapUnitNo][MapUnitNo];  /* マップ層ニューロンの表すパターン */
+	double distance[MAP_SIDE_LENGTH][MAP_SIDE_LENGTH];  /* マップ層のニューロンの内部状態（入力と重みの距離） */
+	int result[MAP_SIDE_LENGTH][MAP_SIDE_LENGTH];  /* マップ層ニューロンの表すパターン */
 	int min_i, min_j;  /* 勝ちニューロンの座標 */ 
 	int i, j;
 	int p;
 
-	for(i=0; i<MapUnitNo; i++){
-		for(j=0; j<MapUnitNo; j++){
-			result[i][j] = PatternNo;
+	for(i=0; i<MAP_SIDE_LENGTH; i++){
+		for(j=0; j<MAP_SIDE_LENGTH; j++){
+			result[i][j] = INPUT_DATA_NUM;
 		}
 	}
-	for(p=0; p<PatternNo; p++){
-		calc_distance(w, data[p], distance);  /* 距離の計算 */
+	for(p=0; p<INPUT_DATA_NUM; p++){
+		calc_distance(weight, input[p], distance);  /* 距離の計算 */
 		find_winner(distance, &min_i, &min_j);  /* 勝ちニューロンを見つける */
 		result[min_i][min_j] = p;  /* 表示用データの格納 */
 	}
 
 	/* 表示 */	 
 	printf("\n");
-	for(i=0; i<MapUnitNo; i++){
-		for(j=0; j<MapUnitNo; j++){
+	for(i=0; i<MAP_SIDE_LENGTH; i++){
+		for(j=0; j<MAP_SIDE_LENGTH; j++){
 			printf("%s", animal[result[i][j]]);
 		}
 		printf("\n");
@@ -204,27 +203,24 @@ void exec(double w[MapUnitNo][MapUnitNo][InputUnitNo], double data[PatternNo][In
 }
 
 
-/********************************************************************
-	 メインプログラム 
-********************************************************************/
-int main(int argc, char *argv[])
+int main(const int argc, const char *argv[])
 {
-	double w[MapUnitNo][MapUnitNo][InputUnitNo];  /* 重み */
-	double data[PatternNo][InputUnitNo];  /* 学習データ */
- 
+	double weight[MAP_SIDE_LENGTH][MAP_SIDE_LENGTH][INPUT_DATA_LENGTH];  /* 重み */
+	double data[INPUT_DATA_NUM][INPUT_DATA_LENGTH];  /* 学習データ */
 
 	/* 引数の数の確認 (引数の数が正しくないときは実行方法を表示) */
 	if(argc <= 1){
-		printf("Usage : ./a.out training_data\n");
+		printf("Usage : ./a.out [TRAINING DATA]\n");
 		exit(1);
 	}
 
 	read_data(argv[1], data);  /* 学習データの読み込み */ 
 
-	init_w(w);  /* 重みの初期化 */
-	exec(w, data);  /* 実行 */
-	training(w, data);  /* 学習 */
-	exec(w, data);  /* 実行 */
+	init_weight(weight);  /* 重みの初期化 */
+	calc_and_show(weight, data);  /* 学習する前の出力を計算して表示 */
+
+	training(weight, data);  /* 学習 */
+	calc_and_show(weight, data);  /* 学習後の出力を計算して表示 */
 
 	return 0;
 }
