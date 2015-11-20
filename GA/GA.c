@@ -8,7 +8,7 @@
 #define GENE_NUM 5  /* 一世代における遺伝子の数 */
 #define MUTATION_RATE 0.1  /* 突然変異の発生確率。0で起らず、1で一世代毎に全てが反転する。 */
 #define LOOP_NUM 20  /* 世代数 */
-#define CROSS_TYPE 1  /* 交差のタイプ。0なら一点交差、1なら二点交差。 */
+#define CROSS_TYPE 1  /* 交差のタイプ。0なら一点交差、1なら二点交差、2ならランダムに交差。 */
 
 #define LOGFILE_NAME "result.log"  /* 課題用のログファイルの名前。 */
 #define ADVANCE_LOG_NAME "advance.log"  /* 拡張ログのファイル名。 */
@@ -155,20 +155,23 @@ int* find_min_fitness(const int genes[GENE_NUM][GENE_LENGTH]){
  * child: 生成した子供を保存する先。
  */
 void cross(const int a[GENE_LENGTH], const int b[GENE_LENGTH], int child[GENE_LENGTH]){
+	int i;
 #if CROSS_TYPE == 0
 	const int pivot = rand()%(GENE_LENGTH-2) + 1;
-	int i;
 
 	for(i=0; i<GENE_LENGTH; i++){
 		child[i] = i < pivot ? a[i] : b[i];
 	}
-#else
+#elif CROSS_TYPE == 1
 	const int pivot_b = rand()%(GENE_LENGTH-3) + 2;
 	const int pivot_a = rand()%pivot_b + 1;
-	int i;
 
 	for(i=0; i<GENE_LENGTH; i++){
 		child[i] = i < pivot_a || pivot_b < i ? a[i] : b[i];
+	}
+#else
+	for(i=0; i<GENE_LENGTH; i++){
+		child[i] = rand()%2 ? a[i] : b[i];
 	}
 #endif
 }
