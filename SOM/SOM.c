@@ -16,7 +16,8 @@
 #define delta_ini 3.5  /* δの初期値 */
 #define delta_fin 0.5  /* δの最終値 */
 
-#define LOGFILE_NAME "training.log"
+#define DISTANCE_LOGFILE "distance.log"
+#define POSITION_LOGFILE "position.log"
 
 
 /** 重みの初期化
@@ -27,7 +28,7 @@
 void init_w(double weight[MapUnitNo][MapUnitNo][InputUnitNo]){
 	int i, j, k;
 
-	srand((unsigned int)time(NULL));  /* 乱数生成器を初期化。 */
+	srand(time(NULL));  /* 乱数生成器を初期化。 */
 	
 	for(i=0; i<MapUnitNo; i++){
 		for(j=0; j<MapUnitNo; j++){
@@ -128,15 +129,19 @@ void training(double weight[MapUnitNo][MapUnitNo][InputUnitNo], double input[Pat
 	int t;
 	int p;
 
-	FILE *fp = fopen(LOGFILE_NAME, "w");
+	FILE *distance_log = fopen(DISTANCE_LOGFILE, "w");
+	FILE *position_log = fopen(POSITION_LOGFILE, "w");
 
 	for(t=0; t<TrainingNo; t++){
-		fprintf(fp, "%d", t);
+		fprintf(distance_log, "%d", t);
+		fprintf(position_log, "%d", t);
+
 		for(p=0; p<PatternNo; p++){
 			calc_distance(weight, input[p], distance);  /* 距離の計算 */
 			find_winner(distance, &min_i, &min_j);  /* 勝ちニューロンを見つける */
 
-			fprintf(fp, " %lf", distance[min_i][min_j]);
+			fprintf(distance_log, " %lf", distance[min_i][min_j]);
+			fprintf(position_log, " %d", min_i*MapUnitNo + min_j);
 
 			/* 重みの更新 */
 			for(i=0; i<MapUnitNo; i++){
@@ -151,9 +156,11 @@ void training(double weight[MapUnitNo][MapUnitNo][InputUnitNo], double input[Pat
 			printf("\r %d/%d", t+1, TrainingNo);
 			fflush(stdout);
 		}
-		fprintf(fp, "\n");
+		fprintf(distance_log, "\n");
+		fprintf(position_log, "\n");
 	}
-	fclose(fp);
+	fclose(distance_log);
+	fclose(position_log);
 	printf("\r\n");
 }
 

@@ -1,5 +1,5 @@
 syntax: glob
 a.out
 *.tar.gz
-BP/learning.log
-BP/error.png
+*/*.log
+*/*.png
