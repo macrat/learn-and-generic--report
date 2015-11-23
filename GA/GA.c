@@ -289,8 +289,7 @@ void write_log(FILE* normal, FILE* advance, const int genes[GENE_NUM][GENE_LENGT
 	avg = (double)sum_fitness((const int (*)[GENE_LENGTH])genes)/GENE_NUM;
 
 	fprintf(normal, "%d %lf %d\n", count, avg, fitnesses[0]);
-	fprintf(advance, "%lf %d %d %d\n", avg, fitnesses[0], fitnesses[GENE_NUM-1], fitnesses[GENE_NUM/2]);
-
+	fprintf(advance, "%lf %lf %lf %lf\n", avg/GENE_LENGTH, (double)fitnesses[0]/GENE_LENGTH, (double)fitnesses[GENE_NUM-1]/GENE_LENGTH, (double)fitnesses[GENE_NUM/2]/GENE_LENGTH);
 }
 
 
