@@ -13,6 +13,7 @@
 #define CHOICE_TYPE 0  /* 選択のタイプ。0ならルーレット方式、1ならトーナメント方式。 */
 
 #define SHOW_VERBOSE  /* これが定義されていれば計算過程を表示する。 */
+/* #define STOP_WHEN_DONE */  /* これが定義されていれば最適解が出た時点で計算をやめる。 */
 
 #define LOGFILE_NAME "result.log"  /* 課題用のログファイルの名前。 */
 #define ADVANCE_LOG_NAME "advance.log"  /* 拡張ログのファイル名。 */
@@ -293,7 +294,11 @@ int main(int argc, char** argv){
 			fitnesses[GENE_NUM-1],
 			fitnesses[GENE_NUM/2]);
 
+#ifdef STOP_WHEN_DONE
+	for(i=0; i<LOOP_NUM && fitnesses[0] < GENE_LENGTH; i++){
+#else
 	for(i=0; i<LOOP_NUM; i++){
+#endif
 		/* 次の世代の遺伝子を生成する。 */
 		for(j=1; j<GENE_NUM; j++){
 			cross(choice((const int (*)[GENE_LENGTH])genes), choice((const int (*)[GENE_LENGTH])genes), next[j]);
