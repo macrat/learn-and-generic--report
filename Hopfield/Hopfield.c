@@ -6,6 +6,7 @@
 
 const char* PATTERN_NAMES[] = {  /* パターンファイルのファイル名一覧 */
 	"crow",
+	"dog",
 	"duck",
 	"lion",
 	"monkey",
