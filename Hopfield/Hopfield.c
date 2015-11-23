@@ -202,6 +202,16 @@ int main(int argc, char *argv[]){
 	input_id = atoi(argv[1]);
 	noise_level = atof(argv[2]) / 100.0;
 
+	/* 引数が正しい範囲に収まっているかを確認。 */
+	if(input_id < 0 || PATTERN_NUM <= input_id){
+		fprintf(stderr, "input pattern ID is out of range.\n");
+		return -1;
+	}
+	if(noise_level < 0.0 || 1.0 < noise_level){
+		fprintf(stderr, "noise level is out of range.\n");
+		return -1;
+	}
+
 	srand(time(NULL));  /* 乱数生成器の初期化。 */
 
 	read_patterns(pattern);  /* 学習パターンの読み込み。 */
