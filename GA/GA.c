@@ -61,7 +61,7 @@ int calc_fitness(const int gene[GENE_LENGTH]){
  * genes: 計算したい遺伝子の配列。
  * fitnesses: 計算結果を保存する配列。0以上GENE_LENGTH未満の値が入る。
  */
-void calc_fitnesses(const int genes[GENE_NUM][GENE_LENGTH], int fitnesses[GENE_NUM]){
+void calc_fitness_list(const int genes[GENE_NUM][GENE_LENGTH], int fitnesses[GENE_NUM]){
 	int i;
 
 	for(i=0; i<GENE_NUM; i++){
@@ -285,7 +285,7 @@ int main(int argc, char** argv){
 			(double)sum_fitness((const int (*)[GENE_LENGTH])genes)/GENE_NUM,
 			(double)calc_fitness(find_max_fitness((const int (*)[GENE_LENGTH])genes)));
 
-	calc_fitnesses((const int (*)[GENE_LENGTH])genes, fitnesses);
+	calc_fitness_list((const int (*)[GENE_LENGTH])genes, fitnesses);
 	qsort(fitnesses, GENE_NUM, sizeof(int), (int (*)(const void*, const void*))sort_cmp);
 	fprintf(adv_log_file, "%lf %d %d %d\n",
 			(double)sum_fitness((const int (*)[GENE_LENGTH])genes)/GENE_NUM,
@@ -315,7 +315,7 @@ int main(int argc, char** argv){
 				(double)sum_fitness((const int (*)[GENE_LENGTH])genes)/GENE_NUM,
 				(double)calc_fitness(find_max_fitness((const int (*)[GENE_LENGTH])genes)));
 
-		calc_fitnesses((const int (*)[GENE_LENGTH])genes, fitnesses);
+		calc_fitness_list((const int (*)[GENE_LENGTH])genes, fitnesses);
 		qsort(fitnesses, GENE_NUM, sizeof(int), (int (*)(const void*, const void*))sort_cmp);
 		fprintf(adv_log_file, "%lf %d %d %d\n",
 				(double)sum_fitness((const int (*)[GENE_LENGTH])genes)/GENE_NUM,
