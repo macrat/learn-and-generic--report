@@ -191,6 +191,9 @@ int main(int argc, char *argv[]){
 		fprintf(stderr, "usage: %s [INPUT ID] [NOISE LEVEL]\n", argv[0]);
 		fprintf(stderr, "\n");
 		fprintf(stderr, "INPUT ID: input pattern ID (0 - %lu)\n", PATTERN_NUM);
+		for(i=0; i<PATTERN_NUM; i++){
+			fprintf(stderr, "\t%d: %s\n", i, PATTERN_NAMES[i]);
+		}
 		fprintf(stderr, "NOISE LEVEL: noise level (0 - 100[%%])\n");
 		return -1;
 	}
