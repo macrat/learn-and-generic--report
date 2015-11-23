@@ -14,9 +14,23 @@
 
 #define SHOW_VERBOSE  /* これが定義されていれば計算過程を表示する。 */
 /* #define STOP_WHEN_DONE */  /* これが定義されていれば最適解が出た時点で計算をやめる。 */
+#define COLORFUL  /* これが定義されていれば遺伝子をカラフルに表示する。定義されていても*NIXでなければやらない。 */
 
 #define LOGFILE_NAME "result.log"  /* 課題用のログファイルの名前。 */
 #define ADVANCE_LOG_NAME "advance.log"  /* 拡張ログのファイル名。 */
+
+
+/* 遺伝子の表示に使用する文字の定義。 */
+#if defined(COLORFUL) && (defined(unix) || defined(__unix__) || defined(__unix) || defined(__APPLE__))  /* COLORFULが定義されていて、かつ*NIXならカラフルな表示をする */
+	#define TRUE_BIT "\e[47m \e[0m"  /* 1の代わり */
+	#define FALSE_BIT "\e[40m \e[0m"  /* 0の代わり */
+	#define SPLIT_BIT "\e[46m \e[0m"  /* 遺伝子の中央に表示する文字。 */
+#else  /* *NIXじゃないなら普通に文字で。 */
+	#undef COLORFUL
+	#define TRUE_BIT "1 "
+	#define FALSE_BIT "0 "
+	#define SPLIT_BIT "| "
+#endif
 
 
 /** ランダムな遺伝子を作る
@@ -236,9 +250,9 @@ void show_gene(const int gene[GENE_LENGTH]){
 
 	for(i=0; i<GENE_LENGTH; i++){
 		if(i == GENE_LENGTH/2){
-			printf("| ");
+			printf(SPLIT_BIT);
 		}
-		printf("%d ", gene[i]);
+		printf("%s", gene[i] ? TRUE_BIT : FALSE_BIT);
 	}
 	printf(" (%d%%)\n", calc_fitness(gene)*100/GENE_LENGTH);
 }
