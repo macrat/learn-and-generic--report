@@ -22,9 +22,10 @@
 
 /* 遺伝子の表示に使用する文字の定義。 */
 #if defined(COLORFUL) && (defined(unix) || defined(__unix__) || defined(__unix) || defined(__APPLE__))  /* COLORFULが定義されていて、かつ*NIXならカラフルな表示をする */
-	#define TRUE_BIT "\e[47m \e[0m"  /* 1の代わり */
-	#define FALSE_BIT "\e[40m \e[0m"  /* 0の代わり */
-	#define SPLIT_BIT "\e[46m \e[0m"  /* 遺伝子の中央に表示する文字。 */
+	#include <unistd.h>
+	#define TRUE_BIT (isatty(fileno(stdout)) ? "\e[47m \e[0m" : "1 ")  /* 1の代わり */
+	#define FALSE_BIT (isatty(fileno(stdout)) ? "\e[40m \e[0m" : "0 ")  /* 0の代わり */
+	#define SPLIT_BIT (isatty(fileno(stdout)) ? "\e[46m \e[0m" : "| ")  /* 遺伝子の中央に表示する文字。 */
 #else  /* *NIXじゃないなら普通に文字で。 */
 	#undef COLORFUL
 	#define TRUE_BIT "1 "
