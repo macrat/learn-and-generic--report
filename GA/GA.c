@@ -342,6 +342,7 @@ int main(int argc, char** argv){
 #endif
 
 	fclose(log_file);
+	fclose(adv_log_file);
 
 	return 0;
 }
