@@ -25,8 +25,9 @@ const char* PATTERN_NAMES[] = {  /* パターンファイルのファイル名�
 
 /* 表示に使う文字 */
 #if 1 && (defined(unix) || defined(__unix) || defined(__unix__) || defined(__APPLE__))  /* *NIXならカラフルに表示しようとする。先頭の1を0にして無効化。 */
-	#define TRUE_BLOCK	"\e[37m\e[47m# \e[0m"
-	#define FALSE_BLOCK	"\e[40m. \e[0m"
+	#include <unistd.h>
+	#define TRUE_BLOCK	(isatty(fileno(stdout)) ? "\e[37m\e[47m# \e[0m" : "##")
+	#define FALSE_BLOCK	(isatty(fileno(stdout)) ? "\e[40m. \e[0m" : "--")
 #else  /* *NIXじゃなければ文字だけで表示する */
 	#define TRUE_BLOCK	"##"
 	#define FALSE_BLOCK	"--"
