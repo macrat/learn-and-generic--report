@@ -277,21 +277,19 @@ int sort_cmp(const int* a, const int* b){
  */
 void write_log(FILE* normal, FILE* advance, const int genes[GENE_NUM][GENE_LENGTH]){
 	int fitnesses[GENE_NUM];
+	double avg;
 
 	static int count = 0;
 	count++;
 
-	fprintf(normal, "%d %lf %lf\n", count,
-			(double)sum_fitness((const int (*)[GENE_LENGTH])genes)/GENE_NUM,
-			(double)calc_fitness(find_max_fitness((const int (*)[GENE_LENGTH])genes)));
 
 	calc_fitness_list((const int (*)[GENE_LENGTH])genes, fitnesses);
 	qsort(fitnesses, GENE_NUM, sizeof(int), (int (*)(const void*, const void*))sort_cmp);
-	fprintf(advance, "%lf %d %d %d\n",
-			(double)sum_fitness((const int (*)[GENE_LENGTH])genes)/GENE_NUM,
-			fitnesses[0],
-			fitnesses[GENE_NUM-1],
-			fitnesses[GENE_NUM/2]);
+
+	avg = (double)sum_fitness((const int (*)[GENE_LENGTH])genes)/GENE_NUM;
+
+	fprintf(normal, "%d %lf %d\n", count, avg, fitnesses[0]);
+	fprintf(advance, "%lf %d %d %d\n", avg, fitnesses[0], fitnesses[GENE_NUM-1], fitnesses[GENE_NUM/2]);
 
 }
 
