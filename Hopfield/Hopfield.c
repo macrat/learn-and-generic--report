@@ -23,8 +23,13 @@ const char* PATTERN_NAMES[] = {  /* パターンファイルのファイル名�
 #define OUTPUT_LEVEL	1  /* 出力の詳細さ。0なら入力と出力だけ、1なら想起一回ごとの出力、2なら1ビットごとの出力。 */
 
 /* 表示に使う文字 */
-#define TRUE_BLOCK	"##"
-#define FALSE_BLOCK	"--"
+#if 1 && (defined(unix) || defined(__unix) || defined(__unix__) || defined(__APPLE__))  /* *NIXならカラフルに表示しようとする。先頭の1を0にして無効化。 */
+	#define TRUE_BLOCK	"\e[37m\e[47m# \e[0m"
+	#define FALSE_BLOCK	"\e[40m. \e[0m"
+#else  /* *NIXじゃなければ文字だけで表示する */
+	#define TRUE_BLOCK	"##"
+	#define FALSE_BLOCK	"--"
+#endif
 
 
 /** 出力関数 (ステップ関数)
