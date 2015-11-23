@@ -268,11 +268,38 @@ int sort_cmp(const int* a, const int* b){
 }
 
 
+/** ログファイルに一世代分の情報を追記する
+ * 内部で呼び出し回数を数えているので無駄な呼び出しに注意。
+ *
+ * normal: 課題用のログファイルへのファイルポインタ。
+ * advance: 拡張ログファイルへのファイルポインタ。
+ * genes: 記録したい世代の遺伝子の配列。
+ */
+void write_log(FILE* normal, FILE* advance, const int genes[GENE_NUM][GENE_LENGTH]){
+	int fitnesses[GENE_NUM];
+
+	static int count = 0;
+	count++;
+
+	fprintf(normal, "%d %lf %lf\n", count,
+			(double)sum_fitness((const int (*)[GENE_LENGTH])genes)/GENE_NUM,
+			(double)calc_fitness(find_max_fitness((const int (*)[GENE_LENGTH])genes)));
+
+	calc_fitness_list((const int (*)[GENE_LENGTH])genes, fitnesses);
+	qsort(fitnesses, GENE_NUM, sizeof(int), (int (*)(const void*, const void*))sort_cmp);
+	fprintf(advance, "%lf %d %d %d\n",
+			(double)sum_fitness((const int (*)[GENE_LENGTH])genes)/GENE_NUM,
+			fitnesses[0],
+			fitnesses[GENE_NUM-1],
+			fitnesses[GENE_NUM/2]);
+
+}
+
+
 int main(int argc, char** argv){
 	int genes[GENE_NUM][GENE_LENGTH];
 	int next[GENE_NUM][GENE_LENGTH];
 	int i, j;
-	int fitnesses[GENE_NUM];
 	FILE* log_file = fopen(LOGFILE_NAME, "w");
 	FILE* adv_log_file = fopen(ADVANCE_LOG_NAME, "w");
 
@@ -282,20 +309,10 @@ int main(int argc, char** argv){
 	show_generation((const int (*)[GENE_LENGTH])genes);  /* 作った世代を表示する */
 	printf("\n");
 
-	fprintf(log_file, "0 %lf %lf\n",
-			(double)sum_fitness((const int (*)[GENE_LENGTH])genes)/GENE_NUM,
-			(double)calc_fitness(find_max_fitness((const int (*)[GENE_LENGTH])genes)));
-
-	calc_fitness_list((const int (*)[GENE_LENGTH])genes, fitnesses);
-	qsort(fitnesses, GENE_NUM, sizeof(int), (int (*)(const void*, const void*))sort_cmp);
-	fprintf(adv_log_file, "%lf %d %d %d\n",
-			(double)sum_fitness((const int (*)[GENE_LENGTH])genes)/GENE_NUM,
-			fitnesses[0],
-			fitnesses[GENE_NUM-1],
-			fitnesses[GENE_NUM/2]);
+	write_log(log_file, adv_log_file, genes);
 
 #ifdef STOP_WHEN_DONE
-	for(i=0; i<LOOP_NUM && fitnesses[0] < GENE_LENGTH; i++){
+	for(i=0; i<LOOP_NUM && calc_fitness(find_max_fitness(genes)) < GENE_LENGTH; i++){
 #else
 	for(i=0; i<LOOP_NUM; i++){
 #endif
@@ -316,17 +333,7 @@ int main(int argc, char** argv){
 		printf("\n");
 #endif
 
-		fprintf(log_file, "%d %lf %lf\n", i+1,
-				(double)sum_fitness((const int (*)[GENE_LENGTH])genes)/GENE_NUM,
-				(double)calc_fitness(find_max_fitness((const int (*)[GENE_LENGTH])genes)));
-
-		calc_fitness_list((const int (*)[GENE_LENGTH])genes, fitnesses);
-		qsort(fitnesses, GENE_NUM, sizeof(int), (int (*)(const void*, const void*))sort_cmp);
-		fprintf(adv_log_file, "%lf %d %d %d\n",
-				(double)sum_fitness((const int (*)[GENE_LENGTH])genes)/GENE_NUM,
-				fitnesses[0],
-				fitnesses[GENE_NUM-1],
-				fitnesses[GENE_NUM/2]);
+		write_log(log_file, adv_log_file, genes);
 	}
 
 #ifndef SHOW_VERBOSE
