@@ -345,7 +345,7 @@ int main(const int argc, const char* argv[]){
 	show_generation((const int (*)[GENE_LENGTH])genes);  /* 作った世代を表示する */
 	printf("\n");
 
-	write_log(log_file, adv_log_file, genes);
+	write_log(log_file, adv_log_file, (const int (*)[GENE_LENGTH])genes);
 
 #ifdef STOP_WHEN_DONE
 	for(i=0; i<LOOP_NUM && calc_fitness(find_max_fitness(genes))<GENE_LENGTH; i++){
@@ -373,7 +373,7 @@ int main(const int argc, const char* argv[]){
 		printf("\n");
 #endif
 
-		write_log(log_file, adv_log_file, genes);
+		write_log(log_file, adv_log_file, (const int (*)[GENE_LENGTH])genes);
 	}
 
 #ifndef SHOW_VERBOSE
