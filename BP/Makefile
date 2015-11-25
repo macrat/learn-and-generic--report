@@ -15,4 +15,4 @@ a.out: BP.c
 
 .PHONY: clean
 clean:
-	rm a.out learning.log error.png
+	rm a.out learning.log error.png output.log

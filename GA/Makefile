@@ -15,4 +15,4 @@ a.out: GA.c
 
 .PHONY: clean
 clean:
-	-rm *.log *.png a.out
+	-rm *.log *.png a.out output.log

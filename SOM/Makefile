@@ -15,4 +15,4 @@ a.out: SOM.c
 
 .PHONY: clean
 clean:
-	rm *.png *.log a.out
+	rm *.png *.log a.out output.log
