@@ -3,6 +3,13 @@
 \usepackage{indentfirst}
 \usepackage{multirow}
 \usepackage{here}
+\usepackage{listings}
+
+\renewcommand{\lstlistingname}{リスト}
+\lstset{language=c,
+  numbers=left,
+  tabsize=2
+}
 
 \title{学習と進化的計算 課題レポート}
 \author{C0114265 志太 悠真}
@@ -13,6 +20,8 @@
 
 \part{ホップフィールドネットワーク}
 \section{プログラム}
+\lstinputlisting[caption=Hopfield.c]{../Hopfield/Hopfield.c}
+
 \section{解説}
 \subsection{step\_func}
 \subsection{read\_pattern}
@@ -26,6 +35,8 @@
 
 \part{誤差逆伝播法}
 \section{プログラム}
+\lstinputlisting[caption=BP.c]{../BP/BP.c}
+
 \section{解説}
 \subsection{sigmoid\_func}
 \subsection{read\_data}
@@ -36,6 +47,8 @@
 
 \part{自己組織化マップ}
 \section{プログラム}
+\lstinputlisting[caption=SOM.c]{../SOM/SOM.c}
+
 \section{解説}
 \subsection{init\_weight}
 \subsection{read\_data}
@@ -49,6 +62,8 @@
 
 \part{遺伝的アルゴリズム}
 \section{プログラム}
+\lstinputlisting[caption=GA.c]{../GA/GA.c}
+
 \section{解説}
 \subsection{make\_genes}
 \subsection{calc\_fitness}
