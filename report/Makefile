@@ -23,7 +23,7 @@ ${OUTPUT_LOGS}: ${SOURCODES}
 
 .PHONY: clean
 clean:
-	-rm *.{dvi,log,aux}
+	-rm *.{dvi,log,aux,toc}
 
 .PHONY: cleanall
 cleanall: clean
