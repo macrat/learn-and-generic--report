@@ -7,3 +7,4 @@ report/*.aux
 report/*.dvi
 report/*.pdf
 report/*.log
+report/*.toc
