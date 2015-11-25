@@ -308,7 +308,7 @@ void write_log(FILE* normal, FILE* advance, const int genes[GENE_NUM][GENE_LENGT
 }
 
 
-int main(int argc, char** argv){
+int main(const int argc, const char* argv[]){
 	int genes[GENE_NUM][GENE_LENGTH];
 	int next[GENE_NUM][GENE_LENGTH];
 	int i, j;
