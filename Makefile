@@ -11,6 +11,17 @@ all:
 	cd SOM && make
 	cd report && make
 
+.PHONY: a.out
+a.out:
+	cd BP && make a.out
+	cd GA && make a.out
+	cd Hopfield && make a.out
+	cd SOM && make a.out
+
+.PHONY: report
+report:
+	cd report && make
+
 ${STUDENT_ID}.tar.gz: $(shell ls */*.c */*.dat */*.plot */Makefile)
 	tar cvzf $@ --exclude a.out --exclude *.log --exclude *.png `ls | grep -v Makefile | grep -v $@`
 
