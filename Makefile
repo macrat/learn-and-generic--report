@@ -9,6 +9,7 @@ all:
 	cd GA && make
 	cd Hopfield && make
 	cd SOM && make
+	cd report && make
 
 ${STUDENT_ID}.tar.gz: $(shell ls */*.c */*.dat */*.plot */Makefile)
 	tar cvzf $@ --exclude a.out --exclude *.log --exclude *.png `ls | grep -v Makefile | grep -v $@`
@@ -20,3 +21,4 @@ clean:
 	-cd GA && make clean
 	-cd Hopfield && make clean
 	-cd SOM && make clean
+	cd report && make cleanall
