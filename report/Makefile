@@ -81,7 +81,7 @@ environ:
 ${PDFS}: ${DVIS} ${DEPENDENCIES}
 	${DVIPDF} $*
 
-${DVIS}: ${PLOTS} $(shell ls *.tex 2>/dev/null)
+${DVIS}: ${PLOTS} $(shell ls *.tex 2>/dev/null) ../Hopfield/Hopfield.c ../BP/BP.c ../SOM/SOM.c ../GA/GA.c
 	${TEX} $*
 	${TEX} $*
 	${TEX} $*
