@@ -3,3 +3,7 @@ a.out
 *.tar.gz
 */*.log
 */*.png
+report/*.aux
+report/*.dvi
+report/*.pdf
+report/*.log

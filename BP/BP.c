@@ -23,7 +23,7 @@
  *
  * return: 0から1までの出力値。
  */
-double SigmoidFunc(const double net){
+double sigmoid_func(const double net){
 	return 1 / (1 + exp(-net));
 }
 
@@ -118,7 +118,7 @@ void forward_propagation(
 
 	/* 中間層のニューロンの出力を計算 */
 	for(j=0; j<HIDDEN_NEURON_NUM; j++){
-		h_out[j] = SigmoidFunc(h_net[j]);
+		h_out[j] = sigmoid_func(h_net[j]);
 	}
 
 	h_out[HIDDEN_NEURON_NUM] = 1.0;  /* 中間層の常に1を出力するニューロンの出力を設定 (閾値の分) */
@@ -133,7 +133,7 @@ void forward_propagation(
 
 	/* 出力層のニューロンの出力を計算 */
 	for(k=0; k<OUTPUT_NEURON_NUM; k++){
-		o_out[k] = SigmoidFunc(o_net[k]);
+		o_out[k] = sigmoid_func(o_net[k]);
 	}
 }
 
@@ -181,7 +181,7 @@ void back_propagation(
 }
 
 
-int main(int argc, char *argv[]){
+int main(const int argc, const char *argv[]){
 	double weight_i2h[HIDDEN_NEURON_NUM][INPUT_NEURON_NUM+1];  /* 入力層から中間層への重み */		
 	double weight_h2o[OUTPUT_NEURON_NUM][HIDDEN_NEURON_NUM+1];  /* 中間層から出力層への重み */		
 	double h_out[HIDDEN_NEURON_NUM+1];  /* 中間層ニューロンの出力 */		
