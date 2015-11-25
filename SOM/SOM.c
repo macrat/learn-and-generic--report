@@ -126,10 +126,12 @@ void find_winner(
  *
  * weight: 重みベクトル。
  * input: 学習するデータ。
+ * show_progress: 真なら計算の進捗状況を表示する。
  */
 void training(
 		double weight[MAP_SIDE_LENGTH][MAP_SIDE_LENGTH][INPUT_DATA_LENGTH],
-		double input[INPUT_DATA_NUM][INPUT_DATA_LENGTH]
+		double input[INPUT_DATA_NUM][INPUT_DATA_LENGTH],
+		const int show_progress
 ){
 	double distance[MAP_SIDE_LENGTH][MAP_SIDE_LENGTH];	/* 距離 */
 	int min_i, min_j;  /* 勝ちニューロンの座標 */
@@ -164,7 +166,7 @@ void training(
 				}
 			}
 		}
-		if(t%10 == 9){
+		if(show_progress && t%10 == 9){
 			printf("\r %d/%d", t+1, TRAINING_NUM);
 			fflush(stdout);
 		}
@@ -226,7 +228,10 @@ int main(const int argc, const char *argv[]){
 
 	/* 引数の数の確認 (引数の数が正しくないときは実行方法を表示) */
 	if(argc <= 1){
-		printf("Usage : ./a.out [TRAINING DATA]\n");
+		printf("Usage : ./a.out [TRAINING DATA] [SILENT FLAG]\n");
+		printf("\n");
+		printf("TRAINING DATA: training data table.\n");
+		printf("SILENT FLAG: if given anything, don't show progress.\n");
 		exit(1);
 	}
 
@@ -238,7 +243,7 @@ int main(const int argc, const char *argv[]){
 		(const double (*)[INPUT_DATA_LENGTH])data
 	);
 
-	training(weight, data);  /* 学習 */
+	training(weight, data, argc <= 2);  /* 学習 */
 	calc_and_show(  /* 学習後の出力を計算して表示 */
 		(const double (*)[MAP_SIDE_LENGTH][INPUT_DATA_LENGTH])weight,
 		(const double (*)[INPUT_DATA_LENGTH])data
