@@ -21,7 +21,8 @@
 
 
 /* 遺伝子の表示に使用する文字の定義。 */
-#if defined(COLORFUL) && (defined(unix) || defined(__unix__) || defined(__unix) || defined(__APPLE__))  /* COLORFULが定義されていて、かつ*NIXならカラフルな表示をする */
+#if defined(COLORFUL) \
+&& (defined(unix) || defined(__unix__) || defined(__unix) || defined(__APPLE__))  /* COLORFULが定義されていて、かつ*NIXならカラフルな表示をする */
 	#include <unistd.h>
 	#define TRUE_BIT (isatty(fileno(stdout)) ? "\e[47m \e[0m" : "1 ")  /* 1の代わり */
 	#define FALSE_BIT (isatty(fileno(stdout)) ? "\e[40m \e[0m" : "0 ")  /* 0の代わり */
@@ -77,7 +78,10 @@ int calc_fitness(const int gene[GENE_LENGTH]){
  * genes: 計算したい遺伝子の配列。
  * fitnesses: 計算結果を保存する配列。0以上GENE_LENGTH未満の値が入る。
  */
-void calc_fitness_list(const int genes[GENE_NUM][GENE_LENGTH], int fitnesses[GENE_NUM]){
+void calc_fitness_list(
+		const int genes[GENE_NUM][GENE_LENGTH],
+		int fitnesses[GENE_NUM]
+){
 	int i;
 
 	for(i=0; i<GENE_NUM; i++){
@@ -192,7 +196,11 @@ int* find_min_fitness(const int genes[GENE_NUM][GENE_LENGTH]){
  * b: 二つめの親。
  * child: 生成した子供を保存する先。
  */
-void cross(const int a[GENE_LENGTH], const int b[GENE_LENGTH], int child[GENE_LENGTH]){
+void cross(
+		const int a[GENE_LENGTH],
+		const int b[GENE_LENGTH],
+		int child[GENE_LENGTH]
+){
 	int i;
 #if CROSS_TYPE == 0
 	const int pivot = rand()%(GENE_LENGTH-2) + 1;
@@ -290,7 +298,11 @@ int sort_cmp(const int* a, const int* b){
  * advance: 拡張ログファイルへのファイルポインタ。
  * genes: 記録したい世代の遺伝子の配列。
  */
-void write_log(FILE* normal, FILE* advance, const int genes[GENE_NUM][GENE_LENGTH]){
+void write_log(
+		FILE* normal,
+		FILE* advance,
+		const int genes[GENE_NUM][GENE_LENGTH]
+){
 	int fitnesses[GENE_NUM];
 	double avg;
 
@@ -299,12 +311,24 @@ void write_log(FILE* normal, FILE* advance, const int genes[GENE_NUM][GENE_LENGT
 
 
 	calc_fitness_list((const int (*)[GENE_LENGTH])genes, fitnesses);
-	qsort(fitnesses, GENE_NUM, sizeof(int), (int (*)(const void*, const void*))sort_cmp);
+	qsort(
+		fitnesses,
+		GENE_NUM,
+		sizeof(int),
+		(int (*)(const void*, const void*))sort_cmp
+	);
 
 	avg = (double)sum_fitness((const int (*)[GENE_LENGTH])genes)/GENE_NUM;
 
 	fprintf(normal, "%d %lf %d\n", count, avg, fitnesses[0]);
-	fprintf(advance, "%lf %lf %lf %lf\n", avg/GENE_LENGTH, (double)fitnesses[0]/GENE_LENGTH, (double)fitnesses[GENE_NUM-1]/GENE_LENGTH, (double)fitnesses[GENE_NUM/2]/GENE_LENGTH);
+	fprintf(
+		advance,
+		"%lf %lf %lf %lf\n",
+		avg/GENE_LENGTH,
+		(double)fitnesses[0]/GENE_LENGTH,
+		(double)fitnesses[GENE_NUM-1]/GENE_LENGTH,
+		(double)fitnesses[GENE_NUM/2]/GENE_LENGTH
+	);
 }
 
 
@@ -324,13 +348,17 @@ int main(const int argc, const char* argv[]){
 	write_log(log_file, adv_log_file, genes);
 
 #ifdef STOP_WHEN_DONE
-	for(i=0; i<LOOP_NUM && calc_fitness(find_max_fitness(genes)) < GENE_LENGTH; i++){
+	for(i=0; i<LOOP_NUM && calc_fitness(find_max_fitness(genes))<GENE_LENGTH; i++){
 #else
 	for(i=0; i<LOOP_NUM; i++){
 #endif
 		/* 次の世代の遺伝子を生成する。 */
 		for(j=1; j<GENE_NUM; j++){
-			cross(choice((const int (*)[GENE_LENGTH])genes), choice((const int (*)[GENE_LENGTH])genes), next[j]);
+			cross(
+				choice((const int (*)[GENE_LENGTH])genes),
+				choice((const int (*)[GENE_LENGTH])genes),
+				next[j]
+			);
 		}
 
 		mutation(next);  /* 突然変異を起こす。 */

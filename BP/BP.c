@@ -34,7 +34,11 @@ double sigmoid_func(const double net){
  * input_data: 入力値を格納する配列。
  * output_data: 出力値（教師データ）を格納する配列。
  */
-void read_data(const char *fname, double input_data[INPUT_PATTERN_NUM][INPUT_NEURON_NUM+1], double output_data[INPUT_PATTERN_NUM][OUTPUT_NEURON_NUM]){
+void read_data(
+		const char *fname,
+		double input_data[INPUT_PATTERN_NUM][INPUT_NEURON_NUM+1],
+		double output_data[INPUT_PATTERN_NUM][OUTPUT_NEURON_NUM]
+){
 	int i, k, p;
 	FILE *fp;
 
@@ -67,7 +71,10 @@ void read_data(const char *fname, double input_data[INPUT_PATTERN_NUM][INPUT_NEU
  * weight_i2h: 入力層からかくれ層への重みの配列。
  * weight_h2o: かくれ層から出力層への重みの配列。
  */
-void init_weight(double weight_i2h[HIDDEN_NEURON_NUM][INPUT_NEURON_NUM+1], double weight_h2o[OUTPUT_NEURON_NUM][HIDDEN_NEURON_NUM+1]){
+void init_weight(
+		double weight_i2h[HIDDEN_NEURON_NUM][INPUT_NEURON_NUM+1],
+		double weight_h2o[OUTPUT_NEURON_NUM][HIDDEN_NEURON_NUM+1]
+){
 	int i, j, k;
 
 	srand((unsigned int)time(NULL)); /* 乱数生成器の初期化 */
@@ -154,14 +161,16 @@ void back_propagation(
 		const double o_out[OUTPUT_NEURON_NUM],
 		const double output[OUTPUT_NEURON_NUM],
 		double weight_i2h[HIDDEN_NEURON_NUM][INPUT_NEURON_NUM+1],
-		double weight_h2o[OUTPUT_NEURON_NUM][HIDDEN_NEURON_NUM+1])
-{
+		double weight_h2o[OUTPUT_NEURON_NUM][HIDDEN_NEURON_NUM+1]
+){
 	int i, j, k;
 
 	/* 中間層から出力層への重みweight_h2o[k][j]の更新 */
 	for(k=0; k<OUTPUT_NEURON_NUM; k++){
 		for(j=0; j<HIDDEN_NEURON_NUM; j++){
-			weight_h2o[k][j] = weight_h2o[k][j] - LEARNING_COEFFICIENT * (o_out[k] - output[k]) * o_out[k] * (1 - o_out[k]) * h_out[j];
+			weight_h2o[k][j] -= LEARNING_COEFFICIENT
+								* (o_out[k] - output[k]) * o_out[k]
+								* (1 - o_out[k]) * h_out[j];
 		}
 	}
 
@@ -172,9 +181,13 @@ void back_propagation(
 
 			weight_i2h[j][i] = 0;
 			for(k=0; k<OUTPUT_NEURON_NUM; k++){
-				weight_i2h[j][i] -= (o_out[k] - output[k]) * o_out[k] * (1 - o_out[k]) * weight_h2o[k][j];
+				weight_i2h[j][i] -= (o_out[k] - output[k])
+									* o_out[k] * (1 - o_out[k])
+									* weight_h2o[k][j];
 			}
-			weight_i2h[j][i] *= LEARNING_COEFFICIENT * h_out[j] * (1 - h_out[j]) * input[i];
+			weight_i2h[j][i] *= LEARNING_COEFFICIENT
+								* h_out[j] * (1 - h_out[j])
+								* input[i];
 			weight_i2h[j][i] += old;
 		}
 	}
@@ -214,7 +227,13 @@ int main(const int argc, const char *argv[]){
 	for(i=0; i<TRAINING_COUNT_MAX && error > MINIMAL_ERROR_LEVEL; i++){
 		error = 0.0; 
 		for(p=0; p<INPUT_PATTERN_NUM; p++){
-			forward_propagation(input[p], (const double (*)[INPUT_NEURON_NUM+1])weight_i2h, (const double (*)[HIDDEN_NEURON_NUM+1])weight_h2o, h_out, o_out);  /* 出力の計算 (前向き計算) */
+			forward_propagation  /* 出力の計算 (前向き計算) */(
+				input[p],
+				(const double (*)[INPUT_NEURON_NUM+1])weight_i2h,
+				(const double (*)[HIDDEN_NEURON_NUM+1])weight_h2o,
+				h_out,
+				o_out
+			);
 			back_propagation(input[p], h_out, o_out, output[p], weight_i2h, weight_h2o);  /* 出力と教師信号を元に学習 (後向き計算) */			 
 
 			/* パターンpに対する誤差の計算 (errorに加算) */
@@ -230,9 +249,19 @@ int main(const int argc, const char *argv[]){
 
 	/* 計算して結果を出力する。 */
 	for(p=0; p<INPUT_PATTERN_NUM; p++){
-		forward_propagation(input[p], (const double (*)[INPUT_NEURON_NUM+1])weight_i2h, (const double (*)[HIDDEN_NEURON_NUM+1])weight_h2o, h_out, o_out);
+		forward_propagation(
+			input[p],
+			(const double (*)[INPUT_NEURON_NUM+1])weight_i2h,
+			(const double (*)[HIDDEN_NEURON_NUM+1])weight_h2o,
+			h_out,
+			o_out
+		);
 
-		printf("[%d] %lf %lf ===> %lf (%lf)\n", p, input[p][0], input[p][1], o_out[0], output[p][0]);
+		printf("[%d] %lf %lf ===> %lf (%lf)\n",
+			p,
+			input[p][0], input[p][1],
+			o_out[0], output[p][0]
+		);
 	}
 
 

@@ -113,7 +113,10 @@ void read_patterns(int dest[PATTERN_NUM][PATTERN_SIZE]){
  * patterns: 学習する入力パターンの配列。1か-1の値を取る。
  * weight: 学習結果を保存する先。weight[i][j]はニューロンiからニューロンjへの重みを示す。
  */
-void learn(const int patterns[PATTERN_NUM][PATTERN_SIZE], int weight[PATTERN_SIZE][PATTERN_SIZE]){
+void learn(
+		const int patterns[PATTERN_NUM][PATTERN_SIZE],
+		int weight[PATTERN_SIZE][PATTERN_SIZE]
+){
 	int pattern_id, i, j;
 
 	/* weightを初期化 */
@@ -162,7 +165,11 @@ void make_noise(int pattern[PATTERN_SIZE], const double level){
  * pattern: 入力データ兼出力の保存先。
  * show_progress: 0以外なら途中経過を出力する。
  */
-void remember(const int weight[PATTERN_SIZE][PATTERN_SIZE], int pattern[PATTERN_SIZE], const int show_progress){
+void remember(
+		const int weight[PATTERN_SIZE][PATTERN_SIZE],
+		int pattern[PATTERN_SIZE],
+		const int show_progress
+){
 	int i, j, net;
 
 	for(i=0; i<PATTERN_SIZE; i++){

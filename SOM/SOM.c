@@ -22,7 +22,9 @@
  *
  * weight: 初期化したい重みの配列。
  */
-void init_weight(double weight[MAP_SIDE_LENGTH][MAP_SIDE_LENGTH][INPUT_DATA_LENGTH]){
+void init_weight(
+		double weight[MAP_SIDE_LENGTH][MAP_SIDE_LENGTH][INPUT_DATA_LENGTH]
+){
 	int i, j, k;
 
 	srand(time(NULL));  /* 乱数生成器を初期化。 */
@@ -42,8 +44,10 @@ void init_weight(double weight[MAP_SIDE_LENGTH][MAP_SIDE_LENGTH][INPUT_DATA_LENG
  * fname: 読み込むファイルの名前。
  * data: 読み込んだデータを格納する配列。
  */
-void read_data(const char *fname, double data[INPUT_DATA_NUM][INPUT_DATA_LENGTH])
-{
+void read_data(
+		const char *fname,
+		double data[INPUT_DATA_NUM][INPUT_DATA_LENGTH]
+){
 	int k, p;
 	FILE *fp;
 
@@ -97,7 +101,10 @@ void calc_distance(
  * min_i: 勝ちニューロンの座標iを格納する変数へのポインタ。
  * min_j: 勝ちニューロンの座標jを格納する変数へのポインタ。
  */
-void find_winner(double distance[MAP_SIDE_LENGTH][MAP_SIDE_LENGTH], int *min_i, int *min_j){
+void find_winner(
+		double distance[MAP_SIDE_LENGTH][MAP_SIDE_LENGTH],
+		int *min_i, int *min_j
+){
 	int i, j;
 	double min = distance[0][0];
 
@@ -120,7 +127,10 @@ void find_winner(double distance[MAP_SIDE_LENGTH][MAP_SIDE_LENGTH], int *min_i, 
  * weight: 重みベクトル。
  * input: 学習するデータ。
  */
-void training(double weight[MAP_SIDE_LENGTH][MAP_SIDE_LENGTH][INPUT_DATA_LENGTH], double input[INPUT_DATA_NUM][INPUT_DATA_LENGTH]){
+void training(
+		double weight[MAP_SIDE_LENGTH][MAP_SIDE_LENGTH][INPUT_DATA_LENGTH],
+		double input[INPUT_DATA_NUM][INPUT_DATA_LENGTH]
+){
 	double distance[MAP_SIDE_LENGTH][MAP_SIDE_LENGTH];	/* 距離 */
 	int min_i, min_j;  /* 勝ちニューロンの座標 */
 	int i, j, k;
@@ -135,10 +145,11 @@ void training(double weight[MAP_SIDE_LENGTH][MAP_SIDE_LENGTH][INPUT_DATA_LENGTH]
 		fprintf(position_log, "%d", t);
 
 		for(p=0; p<INPUT_DATA_NUM; p++){
-			calc_distance(
-					(const double (*)[MAP_SIDE_LENGTH][INPUT_DATA_LENGTH])weight,
-					(const double (*))input[p],
-					distance);  /* 距離の計算 */
+			calc_distance(  /* 距離の計算 */
+				(const double (*)[MAP_SIDE_LENGTH][INPUT_DATA_LENGTH])weight,
+				(const double (*))input[p],
+				distance
+			);
 			find_winner(distance, &min_i, &min_j);  /* 勝ちニューロンを見つける */
 
 			fprintf(distance_log, " %lf", distance[min_i][min_j]);
@@ -171,7 +182,10 @@ void training(double weight[MAP_SIDE_LENGTH][MAP_SIDE_LENGTH][INPUT_DATA_LENGTH]
  * weight: 計算に使用する入力層からマップ層への重みの配列
  * input: 入力するデータの配列
  */
-void calc_and_show(const double weight[MAP_SIDE_LENGTH][MAP_SIDE_LENGTH][INPUT_DATA_LENGTH], const double input[INPUT_DATA_NUM][INPUT_DATA_LENGTH]){
+void calc_and_show(
+		const double weight[MAP_SIDE_LENGTH][MAP_SIDE_LENGTH][INPUT_DATA_LENGTH],
+		const double input[INPUT_DATA_NUM][INPUT_DATA_LENGTH]
+){
 	const char *animal[INPUT_DATA_NUM + 1] = {
 			"  dove","  hen ","  duck"," goose","  owl ",
 			"  hawk"," eagle","  fox ","  dog ","  wolf", 
@@ -219,10 +233,16 @@ int main(const int argc, const char *argv[]){
 	read_data(argv[1], data);  /* 学習データの読み込み */ 
 
 	init_weight(weight);  /* 重みの初期化 */
-	calc_and_show((const double (*)[MAP_SIDE_LENGTH][INPUT_DATA_LENGTH])weight, (const double (*)[INPUT_DATA_LENGTH])data);  /* 学習する前の出力を計算して表示 */
+	calc_and_show(  /* 学習する前の出力を計算して表示 */
+		(const double (*)[MAP_SIDE_LENGTH][INPUT_DATA_LENGTH])weight,
+		(const double (*)[INPUT_DATA_LENGTH])data
+	);
 
 	training(weight, data);  /* 学習 */
-	calc_and_show((const double (*)[MAP_SIDE_LENGTH][INPUT_DATA_LENGTH])weight, (const double (*)[INPUT_DATA_LENGTH])data);  /* 学習後の出力を計算して表示 */
+	calc_and_show(  /* 学習後の出力を計算して表示 */
+		(const double (*)[MAP_SIDE_LENGTH][INPUT_DATA_LENGTH])weight,
+		(const double (*)[INPUT_DATA_LENGTH])data
+	);
 
 	return 0;
 }
