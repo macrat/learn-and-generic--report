@@ -206,8 +206,7 @@ void calc_and_show(const double weight[MAP_SIDE_LENGTH][MAP_SIDE_LENGTH][INPUT_D
 }
 
 
-int main(const int argc, const char *argv[])
-{
+int main(const int argc, const char *argv[]){
 	double weight[MAP_SIDE_LENGTH][MAP_SIDE_LENGTH][INPUT_DATA_LENGTH];  /* 重み */
 	double data[INPUT_DATA_NUM][INPUT_DATA_LENGTH];  /* 学習データ */
 
