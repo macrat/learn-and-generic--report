@@ -22,8 +22,8 @@ a.out:
 report:
 	cd report && make
 
-${STUDENT_ID}.tar.gz: $(shell ls */*.c */*.dat */*.plot */Makefile)
-	tar cvzf $@ --exclude a.out --exclude *.log --exclude *.png `ls | grep -v Makefile | grep -v $@`
+${STUDENT_ID}.tar.gz: Makefile $(shell ls */*.c */*.dat */*.plot */Makefile)
+	tar cvzf $@ `find -name *.c -or -name *.dat -or -name *.plot -or -name Makefile | grep -v '(\./Makefile|report)'`
 
 .PHONY: clean
 clean:
