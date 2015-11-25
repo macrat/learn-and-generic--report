@@ -7,10 +7,10 @@ OUTPUT_LOGS = $(shell ls ../*/*.c | sed -e 's/[^/]*$$/output.log/')
 .PHONY: all
 all: report.pdf
 
-report.pdf: report.dvi ${SOURCODES} ${OUTPUT_LOGS}
+report.pdf: report.dvi
 	${DVIPDF} $<
 
-report.dvi: report.tex
+report.dvi: report.tex ${SOURCODES} ${OUTPUT_LOGS}
 	${TEX} $<
 	${TEX} $<
 	${TEX} $<
