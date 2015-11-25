@@ -180,7 +180,7 @@ void remember(const int weight[PATTERN_SIZE][PATTERN_SIZE], int pattern[PATTERN_
 }
 
 
-int main(int argc, char *argv[]){
+int main(const int argc, const char *argv[]){
 	int pattern[PATTERN_NUM][PATTERN_SIZE];  /* 学習パターン */
 	int weight[PATTERN_SIZE][PATTERN_SIZE];  /* 重み */
 	int out[PATTERN_SIZE];  /* 出力 */	 
