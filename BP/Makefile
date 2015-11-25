@@ -1,8 +1,11 @@
 .PHONY: all
-all: error.png
+all: error.png output.log
 
 error.png: learning.log graph.plot
 	gnuplot graph.plot
+
+output.log: a.out xor.dat
+	./a.out xor.dat > output.log
 
 learning.log: a.out xor.dat
 	./a.out xor.dat
