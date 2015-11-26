@@ -3,6 +3,8 @@
 #include <string.h>
 #include <time.h>
 
+#ifndef OVERRIDE_PARAMS  /* Makefile側でオプションをいじれるように */
+
 #define GENE_LENGTH 10  /* 遺伝子の長さ（=ビット数） */
 
 #define GENE_NUM 5  /* 一世代における遺伝子の数 */
@@ -15,6 +17,8 @@
 #define SHOW_VERBOSE  /* これが定義されていれば計算過程を表示する。 */
 /* #define STOP_WHEN_DONE */  /* これが定義されていれば最適解が出た時点で計算をやめる。 */
 #define COLORFUL  /* これが定義されていれば遺伝子をカラフルに表示する。定義されていても*NIXでなければやらない。 */
+
+#endif
 
 #define LOGFILE_NAME "result.log"  /* 課題用のログファイルの名前。 */
 #define ADVANCE_LOG_NAME "advance.log"  /* 拡張ログのファイル名。 */
