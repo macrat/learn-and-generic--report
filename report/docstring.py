@@ -8,17 +8,17 @@ if len(sys.argv) <= 1:
 	print('usage: {} [FILE]'.format(sys.argv[0]))
 else:
 	with open(sys.argv[1], 'r') as fp:
-		for match in re.finditer(r'/\*\*(?P<doc>.*?)\*/\n(void|int)\*? (?P<func>\w+?)\(', fp.read(), re.DOTALL):
+		for match in re.finditer(r'/\*\*.*?\n(?P<doc>.*?)\*/\n(void|int)\*? (?P<func>\w+?)\(', fp.read(), re.DOTALL):
 			funcname = match.group('func')
 			doc = '\n'.join(x.strip('* ') for x in match.group('doc').splitlines()).strip()
 
-			if doc.splitlines()[-1].startswith('return: '):
+			if doc and doc.splitlines()[-1].startswith('return: '):
 				_return = ':'.join(doc.splitlines()[-1].split(':')[1:]).strip()
 				doc = '\n'.join(doc.splitlines()[:-1])
 			else:
 				_return = None
 
-			if all(':' in x for x in doc.split('\n\n')[-1].splitlines()):
+			if doc and all(':' in x for x in doc.split('\n\n')[-1].splitlines()):
 				description = '\n\n'.join(doc.split('\n\n')[:-1])
 				params = tuple((x.split(':')[0].strip(), ':'.join(x.split(':')[1:]).strip()) for x in doc.split('\n\n')[-1].splitlines())
 			else:
