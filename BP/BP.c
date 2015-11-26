@@ -8,10 +8,10 @@
 #define HIDDEN_NEURON_NUM 2  /* 中間層のニューロン数 */
 #define OUTPUT_NEURON_NUM 1  /* 出力層のニューロン数 */
 
-#define LEARNING_COEFFICIENT 0.2  /* 学習係数 */
+#define LEARNING_COEFFICIENT 0.1  /* 学習係数 */
 #define INPUT_PATTERN_NUM 4  /* 入力データのパターン数 */
 
-#define TRAINING_COUNT_MAX 1000000  /* 学習回数 */
+#define TRAINING_COUNT_MAX 350000  /* 学習回数 */
 #define MINIMAL_ERROR_LEVEL 0.001  /* 許容する誤差の最大値 */
 
 #define LOGFILE_NAME "learning.log"  /* ログファイルの名前 */
