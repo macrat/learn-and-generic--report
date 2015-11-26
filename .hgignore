@@ -3,8 +3,5 @@ a.out
 *.tar.gz
 */*.log
 */*.png
-report/*.aux
-report/*.dvi
-report/*.pdf
-report/*.log
-report/*.toc
+report/*.{aux,dvi,pdf,log,toc}
+report/{BP,GA,Hopfield,SOM}.tex
