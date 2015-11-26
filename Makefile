@@ -23,7 +23,7 @@ report:
 	cd report && make
 
 ${STUDENT_ID}.tar.gz: Makefile $(shell ls */*.c */*.dat */*.plot */Makefile report/*.tex report/*.sty)
-	tar cvzf $@ `find -name *.c -or -name *.dat -or -name *.plot -or -name Makefile -or -name *.tex -or -name *.sty | grep -v '\./Makefile'`
+	tar cvzf $@ `find -name *.c -or -name *.dat -or -name *.plot -or -name Makefile -or -name report.tex -or -name *.sty | grep -v '\./Makefile'`
 
 .PHONY: clean
 clean:
