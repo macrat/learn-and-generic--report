@@ -10,7 +10,7 @@ all: report.pdf
 report.pdf: report.dvi
 	${DVIPDF} $<
 
-report.dvi: report.tex ${SOURCODES} ${OUTPUT_LOGS}
+report.dvi: report.tex ${SOURCODES} ${OUTPUT_LOGS} BP.tex GA.tex Hopfield.tex SOM.tex
 	${TEX} $<
 	${TEX} $<
 	${TEX} $<
@@ -21,9 +21,21 @@ ${OUTPUT_LOGS}: ${SOURCODES}
 	cd ../Hopfield/ && make output.log
 	cd ../SOM/ && make output.log
 
+BP.tex: ../BP/BP.c docstring.py
+	python docstring.py ../BP/BP.c > BP.tex
+
+GA.tex: ../GA/GA.c docstring.py
+	python docstring.py ../GA/GA.c > GA.tex
+
+Hopfield.tex: ../Hopfield/Hopfield.c docstring.py
+	python docstring.py ../Hopfield/Hopfield.c > Hopfield.tex
+
+SOM.tex: ../SOM/SOM.c docstring.py
+	python docstring.py ../SOM/SOM.c > SOM.tex
+
 .PHONY: clean
 clean:
-	-rm *.{dvi,log,aux,toc}
+	-rm *.{dvi,log,aux,toc} BP.tex GA.tex Hopfield.tex SOM.tex
 
 .PHONY: cleanall
 cleanall: clean
