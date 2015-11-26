@@ -34,11 +34,15 @@ const char* PATTERN_NAMES[] = {  /* パターンファイルのファイル名�
 #endif
 
 
-/** 出力関数 (ステップ関数)
- * netが正なら1を、負なら-1を返す。0の場合はpoutを返す。
+/** 出力関数（ステップ関数）
+ * 出力関数として使うためのステップ関数。
+ * 引数で与えられた内部状態netが正なら1を、負なら-1を返す。
+ * 0の場合は前回の出力の値であるpoutを返す。
  * 
  * net: 内部状態の値。
  * pout: 1時刻前の出力の値。
+ *
+ * return: 内部状態から計算されたニューロンの出力値。
  */
 int step_func(const int net, const int pout){
 	if(net > 0){
@@ -52,10 +56,10 @@ int step_func(const int net, const int pout){
 
 
 /** パターンの表示
- * パターンをそれっぽく表示する。
+ * 引数で与えられたintの配列を横PATTERN_WIDTH、縦PATTERN_HEIGHTのパターンとして表示する。
  * 表示に使用する文字はTRUE_BLOCKとFALSE_BLOCKの二つ。
  *
- * out: ニューロンの出力値。1か-1のどちらか。
+ * out: ニューロンの出力値。1か-1のどちらかの配列。
  */
 void display_pattern(const int out[PATTERN_SIZE]){
 	int x, y;
@@ -71,6 +75,12 @@ void display_pattern(const int out[PATTERN_SIZE]){
 
 
 /** パターンファイルの読み込み
+ * 引数で与えられた名前のファイルを開き、一次元のint配列に読み込む。
+ * ファイルはクリアテキストで、スペースもしくは改行区切り。
+ * 実際のファイルの長さに関わらずPATTERN_SIZE分読み込んだ時点で終了する。
+ *
+ * ファイルが存在しない場合はエラーを表示したあとにプログラムを終了させる。
+ * また、データがPATTERN_SIZEに足りない場合の動作は未定義である。
  *
  * fname: 読み込むファイルの名前。
  * dest: 読み込んだパターンを保存する配列。
@@ -96,6 +106,7 @@ void read_pattern(const char *fname, int dest[PATTERN_SIZE]){
 
 
 /** 全てのパターンファイルの読み込み
+ * グローバルで定義された配列PATTERN_NAMESに列挙されたパターンファイルを全て読み込む。
  *
  * dest: パターンを保存するバッファ。
  */
@@ -109,6 +120,7 @@ void read_patterns(int dest[PATTERN_NUM][PATTERN_SIZE]){
 
 
 /** 複数の入力パターンから重みを決定する
+ * パターンの配列を受け取り、ホップフィールドネットワークの重みを決定する。
  *
  * patterns: 学習する入力パターンの配列。1か-1の値を取る。
  * weight: 学習結果を保存する先。weight[i][j]はニューロンiからニューロンjへの重みを示す。
@@ -159,7 +171,7 @@ void make_noise(int pattern[PATTERN_SIZE], const double level){
 
 
 /** 想起
- * 与えられた重みと入力から想起を行なう。
+ * 与えられた重みと入力から想起を行ない、結果を配列に格納する。
  *
  * weight: 想起に使用する重み。1か-1のいずれかの値の配列。
  * pattern: 入力データ兼出力の保存先。
@@ -187,6 +199,10 @@ void remember(
 }
 
 
+/** メイン関数
+ * 引数で入力するパターンのIDと発生させるノイズの量を受け取り、計算結果を表示する。
+ * 想起の処理はTRY_NUM回繰り返し行なわれる。
+ */
 int main(const int argc, const char *argv[]){
 	int pattern[PATTERN_NUM][PATTERN_SIZE];  /* 学習パターン */
 	int weight[PATTERN_SIZE][PATTERN_SIZE];  /* 重み */
