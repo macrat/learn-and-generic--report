@@ -8,7 +8,7 @@ if len(sys.argv) <= 1:
 	print('usage: {} [FILE]'.format(sys.argv[0]))
 else:
 	with open(sys.argv[1], 'r') as fp:
-		for match in re.finditer(r'/\*\*.*?\n(?P<doc>.*?)\*/\n(void|int)\*? (?P<func>\w+?)\(', fp.read(), re.DOTALL):
+		for match in re.finditer(r'/\*\*.*?\n(?P<doc>.*?)\*/\n(void|int|double)\*? (?P<func>\w+?)\(', fp.read(), re.DOTALL):
 			funcname = match.group('func')
 			doc = '\n'.join(x.strip('* ') for x in match.group('doc').splitlines()).strip()
 
