@@ -36,6 +36,7 @@
 
 
 /** ランダムな遺伝子を作る
+ * ランダムな遺伝子で配列を初期化する。
  *
  * genes: 初期化したい遺伝子の配列。
  */
@@ -52,6 +53,8 @@ void make_genes(int genes[GENE_NUM][GENE_LENGTH]){
 
 
 /** 適応度の計算
+ * 与えられた遺伝子の適応度を計算する。
+ * 前半のビットが全て0、後半のビットが全て1である遺伝子の適応度をGENE_LENGTHとして、1ビット違うごとに1づつ下ってゆく。
  *
  * gene: 計算したい個体の遺伝子。0か1の値しか取らない。
  *
@@ -74,6 +77,7 @@ int calc_fitness(const int gene[GENE_LENGTH]){
 
 
 /** 適応度をまとめて計算する
+ * 遺伝子の配列について、全ての適応度をまとめて計算し、引数で与えられた配列に結果を代入する。
  *
  * genes: 計算したい遺伝子の配列。
  * fitnesses: 計算結果を保存する配列。0以上GENE_LENGTH未満の値が入る。
@@ -91,10 +95,11 @@ void calc_fitness_list(
 
 
 /** 適応度の合計を計算する
+ * 配列で渡されたすべての遺伝子の適応度の合計を計算する。
  *
  * genes: 計算したい遺伝子の配列。
  *
- * return: genesの全ての遺伝子の適応度の合計。
+ * return: 引数genesの全ての遺伝子の適応度の合計。
  */
 int sum_fitness(const int genes[GENE_NUM][GENE_LENGTH]){
 	int sum = 0;
@@ -109,6 +114,7 @@ int sum_fitness(const int genes[GENE_NUM][GENE_LENGTH]){
 
 
 /** 交差に使う個体をランダムに一つ選ぶ
+ * 交差に使用する個体をランダムに一つ選ぶ。
  * 選択の方法はCHOICE_TYPE定数によって決まる。
  *
  * genes: 遺伝子の一覧。この中からランダムに一つ選ぶ。
@@ -148,7 +154,8 @@ int* choice(const int genes[GENE_NUM][GENE_LENGTH]){
 }
 
 
-/** 適応度が最も高い個体のインデックスを取得する
+/** 適応度が最も高い個体を探す
+ * 与えられた遺伝子の配列のうち、適応度が最も高い個体を探す。
  *
  * genes: 探したい遺伝子の一覧。
  *
@@ -169,7 +176,8 @@ int* find_max_fitness(const int genes[GENE_NUM][GENE_LENGTH]){
 }
 
 
-/** 適応度が最も低い個体のインデックスを取得する
+/** 適応度が最も低い個体を探す
+ * 与えられた遺伝子の配列のうち、適応度が最も低い個体を探す。
  *
  * genes: 探したい遺伝子の一覧。
  *
@@ -191,6 +199,8 @@ int* find_min_fitness(const int genes[GENE_NUM][GENE_LENGTH]){
 
 
 /** 二つの遺伝子を交差させて新たな遺伝子を作る
+ * 引数で与えられた二つの遺伝子を交差させて新たな遺伝子を作り、引数childに格納する。
+ * 交差の方法は定数CROSS_TYPEによって決定される。
  *
  * a: 一つめの親。
  * b: 二つめの親。
@@ -223,17 +233,8 @@ void cross(
 }
 
 
-/** 遺伝子をコピーする
- *
- * src: コピー元の配列。
- * dst: コピー先の配列。
- */
-void copy_gene(const int src[GENE_LENGTH], int dst[GENE_LENGTH]){
-	memcpy(dst, src, GENE_LENGTH * sizeof(int));
-}
-
-
 /** 突然変異を発生させる
+ * 与えられた遺伝子の配列全体について、定数MUTATION_RATEの確率で突然変異を起こす。
  *
  * genes: 突然変異を起こしたい遺伝子の配列。
  */
@@ -251,6 +252,10 @@ void mutation(int genes[GENE_NUM][GENE_LENGTH]){
 
 
 /** 遺伝子情報を表示する
+ * 一つの遺伝子の情報を表示する。
+ * 表示に使用する文字は定数TRUE_BITとFALSE_BITによって定義される。
+ * また、遺伝子の中央にはSPLIT_BITが表示される。
+ * いずれの定数も文字列で、任意の長さを設定出来る。
  *
  * gene: 表示したい遺伝子。
  */
@@ -268,6 +273,8 @@ void show_gene(const int gene[GENE_LENGTH]){
 
 
 /** 一世代の情報を表示する
+ * 一世代全ての遺伝子の情報を表示する。
+ * show_gene関数で表示される情報に加え、その世代における最大、最小、平均などの値も表示される。
  *
  * genes: 表示したい遺伝子の配列。
  */
@@ -285,6 +292,7 @@ void show_generation(const int genes[GENE_NUM][GENE_LENGTH]){
 
 
 /** ソート用の比較関数
+ * int配列のソートに使用するための比較関数。
  */
 int sort_cmp(const int* a, const int* b){
 	return *b - *a;
@@ -292,7 +300,12 @@ int sort_cmp(const int* a, const int* b){
 
 
 /** ログファイルに一世代分の情報を追記する
- * 内部で呼び出し回数を数えているので無駄な呼び出しに注意。
+ * 二種類のログファイルに一世代分の情報を追記する。
+ *
+ * normalログには講義で指示された基本的な内容が記録される。
+ * advanceログにはその世代における最大、最小、平均、中央値が記録される。
+ *
+ * 内部で呼び出された回数を数えており、normalログへの記録に使用している。
  *
  * normal: 課題用のログファイルへのファイルポインタ。
  * advance: 拡張ログファイルへのファイルポインタ。
@@ -332,6 +345,12 @@ void write_log(
 }
 
 
+/** メイン関数
+ * メイン関数。引数は受けとらない。
+ * 
+ * 遺伝子の生成や計算、表示などの関数の呼び出しを行なう。
+ * 計算はLOOP_NUM世代繰り返して行なわれる。
+ */
 int main(const int argc, const char* argv[]){
 	int genes[GENE_NUM][GENE_LENGTH];
 	int next[GENE_NUM][GENE_LENGTH];
@@ -363,7 +382,7 @@ int main(const int argc, const char* argv[]){
 
 		mutation(next);  /* 突然変異を起こす。 */
 
-		copy_gene(find_max_fitness((const int (*)[GENE_LENGTH])genes), next[0]);  /* 最も優秀な遺伝子を次の世代にコピーする。 */
+		memcpy(next[0], find_max_fitness((const int (*)[GENE_LENGTH])genes), GENE_LENGTH * sizeof(int));  /* 最も優秀な遺伝子を次の世代にコピーする。 */
 
 		memcpy(genes, next, sizeof(genes));  /* 新しい世代をコピーする。 */
 
