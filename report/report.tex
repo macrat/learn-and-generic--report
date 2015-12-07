@@ -72,6 +72,87 @@
 \lstinputlisting[caption=GA.cの実行結果]{../GA/output.log}
 
 \section{考察}
+今回の実装では交叉方式として一点交叉、二点交叉、一様交叉の三種類、選択方式としてルーレット方式とトーナメント方式の二種類を実装した。
+これらの方式の組み合せについて、最適解が出るまでの世代数を検証した。
+検証に用いたパラメータを表\ref{GA_params}に示す。
 
+\begin{table}[H]
+	\caption{性能検証に用いたパラメータ\label{GA_params}}
+	\begin{center}
+		\begin{tabular}{|l|r|} \hline
+			遺伝子の長さ & 100 \\ \hline
+			一世代の遺伝子の数 & 40 \\ \hline
+			突然変異の確率 & 1\% \\ \hline
+		\end{tabular}
+	\end{center}
+\end{table}
+
+検証結果を表\ref{GA_compare}および図\ref{GAor}から図\ref{GArt}に示す。
+
+\begin{table}[H]
+	\caption{交叉方式、選択方式の性能比較\label{GA_compare}}
+	\begin{center}
+		\begin{tabular}{|l|l|r|} \hline
+			交叉方式 & 選択方式 & 最適解までの世代数 \\ \hline\hline
+			一様交叉 & トーナメント & 58 \\ \hline
+			二点交叉 & トーナメント & 74 \\ \hline
+			一点交叉 & トーナメント & 94 \\ \hline
+			二点交叉 & ルーレット & 1108 \\ \hline
+			一点交叉 & ルーレット & 1339 \\ \hline
+			一様交叉 & ルーレット & 3618 \\ \hline
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{figure}[H]
+	\begin{tabular}{c}
+		\begin{minipage}{0.5\hsize}
+			\includegraphics[width=\hsize]{GA/one-roullette.png}
+			\caption{一点交叉、ルーレット方式での実行結果\label{GAor}}
+		\end{minipage}
+
+		\begin{minipage}{0.5\hsize}
+			\includegraphics[width=\hsize]{GA/one-tournament.png}
+			\caption{一点交叉、トーナメント方式での実行結果\label{GAot}}
+		\end{minipage}
+	\end{tabular}
+\end{figure}
+
+\begin{figure}[H]
+	\begin{tabular}{c}
+		\begin{minipage}{0.5\hsize}
+			\includegraphics[width=\hsize]{GA/two-roullette.png}
+			\caption{二点交叉、ルーレット方式での実行結果\label{GAtr}}
+		\end{minipage}
+
+		\begin{minipage}{0.5\hsize}
+			\includegraphics[width=\hsize]{GA/two-tournament.png}
+			\caption{二点交叉、トーナメント方式での実行結果\label{GAtt}}
+		\end{minipage}
+	\end{tabular}
+\end{figure}
+
+\begin{figure}[H]
+	\begin{tabular}{c}
+		\begin{minipage}{0.5\hsize}
+			\includegraphics[width=\hsize]{GA/rand-roullette.png}
+			\caption{一様交叉、ルーレット方式での実行結果\label{GArr}}
+		\end{minipage}
+
+		\begin{minipage}{0.5\hsize}
+			\includegraphics[width=\hsize]{GA/rand-tournament.png}
+			\caption{一様交叉、トーナメント方式での実行結果\label{GArt}}
+		\end{minipage}
+	\end{tabular}
+\end{figure}
+
+ルーレット方式、トーナメント方式で少なくとも100倍以上の差が出ており、今回の問題ではトーナメント方式の方がより効率的であるという結果が出た。
+図を見るとトーナメント方式ではルーレット方式に比べ各世代の最良値と最悪値の幅が狭く、トーナメント方式は選択圧が強いことが分かる。
+本実験で用いた問題には局所解が無いことから、選択圧がより強い方がよりよい結果が出たものと考えられる。
+
+また、ルーレット方式では最も必要な世代数が多かった一様交叉であるが、トーナメント方式では最短で最適解に至った。
+一様交叉では二点交叉に比べ親の遺伝子配列を大きく崩す可能性が高いとされるが、選択圧の高いトーナメント方式ではこの特性の悪影響が出づらかったためとより良い結果が出たと考えられる。
+
+以上のことから、問題に応じて交叉や選択の方式を変えることが非常に重要であることが分かった。
 
 \end{document}
