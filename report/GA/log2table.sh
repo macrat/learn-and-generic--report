@@ -1,0 +1,7 @@
+echo '\\begin{table}[H]'
+echo '\\caption{交叉方式、選択方式の性能比較}'
+echo '\\begin{tabular}{|l|l|r|} \\hline'
+echo '交叉方式 & 選択方式 & 最適解までの世代数 \\\\ \\hline\\hline'
+wc -l *.log | head -n -1 | sort -n | sed -e 's/\.log$//' -e 's/one-/一点交叉 /' -e 's/two-/二点交叉 /' -e 's/rand-/一様交叉 /' -e 's/roullette/ルーレット/' -e 's/tournament/トーナメント/' | awk '{ print $2, "&", $3, "&", $1, "\\\\ \\hline" }'
+echo '\\end{tabular}'
+echo '\\end{table}'
