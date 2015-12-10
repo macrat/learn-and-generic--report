@@ -1,0 +1,10 @@
+  wolf  ・    dog   ・    fox   ・    ・    dove  ・    owl 
+  ・    ・    ・    ・    ・    ・    ・    ・    ・    ・  
+ tiger  ・    ・    ・    ・    ・    ・    ・    ・    hawk
+  ・    ・    ・    ・    ・    ・    ・    ・    ・    ・  
+  lion  ・    ・    ・    ・    cat   ・    ・    ・    ・  
+  ・    ・    ・    ・    ・    ・    ・    ・    ・   eagle
+ horse  ・   zebra  ・    ・    ・    ・    ・    ・    ・  
+  ・    ・    ・    ・    ・    ・    ・    ・    ・    ・  
+  ・    ・    ・    ・    ・    ・   goose  ・    ・    ・  
+  cow   ・    ・    hen   ・    ・    ・    ・    ・    duck

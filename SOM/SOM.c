@@ -6,7 +6,9 @@
 
 #define INPUT_DATA_NUM 16  /* 入力されるデータの数 */
 #define INPUT_DATA_LENGTH 29  /* 入力層のニューロン数 */
-#define MAP_SIDE_LENGTH 10  /* マップ層の1辺のニューロン数 */
+#ifndef MAP_SIDE_LENGTH
+	#define MAP_SIDE_LENGTH 10  /* マップ層の1辺のニューロン数 */
+#endif
 #define TRAINING_NUM 2000  /* 学習回数 */
 
 #define LEARNING_COEFFICIENT 0.01  /* 学習係数 */

@@ -16,3 +16,10 @@ a.out: SOM.c
 .PHONY: clean
 clean:
 	rm *.png *.log a.out output.log
+
+.PHONY: compare
+compare:
+	gcc -lm -DMAP_SIDE_LENGTH=5 SOM.c && ./a.out animal.dat yes | tail -n 5 > map_5.txt
+	gcc -lm -DMAP_SIDE_LENGTH=10 SOM.c && ./a.out animal.dat yes | tail -n 10 > map_10.txt
+	gcc -lm -DMAP_SIDE_LENGTH=15 SOM.c && ./a.out animal.dat yes | tail -n 15 > map_15.txt
+	rm a.out

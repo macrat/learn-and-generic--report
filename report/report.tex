@@ -59,6 +59,13 @@
 \lstinputlisting[caption=SOM.cの実行結果]{../SOM/output.log}
 
 \section{考察}
+自己組織化マップにおける出力層の大きさの影響を調べるため、マップのサイズを5, 10, 20にして出力を検証した。実行結果をリスト\ref{SOM_map_5}からリスト\ref{SOM_map_15}に示す。
+
+\lstinputlisting[caption=マップのサイズが$5\times5$のときの出力の一例, label=SOM_map_5]{SOM/map_5.txt}
+\lstinputlisting[caption=マップのサイズが$10\times10$のときの出力の一例, label=SOM_map_10]{SOM/map_10.txt}
+\lstinputlisting[caption=マップのサイズが$15\times15$のときの出力の一例, label=SOM_map_15]{SOM/map_15.txt}
+
+マップのサイズ$5\times5$のときの出力であるリスト\ref{SOM_map_5}に表示された動物の種類が少ないのは場所が少ないため、複数の動物が重なったからである。
 
 
 \part{遺伝的アルゴリズム}
