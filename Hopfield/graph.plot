@@ -9,4 +9,4 @@ set xtic 10
 set ytic 10
 
 set output "error.png"
-plot "error.txt" w lp t ""
+plot 100-100/(1+exp(-(x-50)/4)), "error.txt"
