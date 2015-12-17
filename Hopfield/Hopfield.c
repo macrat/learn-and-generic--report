@@ -199,6 +199,28 @@ void remember(
 }
 
 
+/** 想起の点数を計算
+ * 想起にどの程度成功しているかの点数を計算して返却する。
+ *
+ * output: ホップフィードが出力したパターン。
+ * answer: 正解のパターン。
+ *
+ * return: 想起の成功度合い。0から1までの数値。
+ */
+double calc_score(const int output[PATTERN_SIZE], const int answer[PATTERN_SIZE]){
+	int result = 0;
+	int i;
+
+	for(i=0; i<PATTERN_SIZE; i++){
+		if(output[i] == answer[i]){
+			result++;
+		}
+	}
+
+	return (double)result/PATTERN_SIZE;
+}
+
+
 /** メイン関数
  * 引数で入力するパターンのIDと発生させるノイズの量を受け取り、計算結果を表示する。
  * 想起の処理はTRY_NUM回繰り返し行なわれる。
@@ -209,21 +231,27 @@ int main(const int argc, const char *argv[]){
 	int out[PATTERN_SIZE];  /* 出力 */	 
 	int input_id;  /* 入力パターンの番号 */ 
 	double noise_level;  /* ノイズレベル */	
-	int i;
+	int loop = 1;
+	double score = 0;
+	int i, j;
 
 	if(argc <= 2){
-		fprintf(stderr, "usage: %s [INPUT ID] [NOISE LEVEL]\n", argv[0]);
+		fprintf(stderr, "usage: %s [INPUT ID] [NOISE LEVEL] (LOOP NUM)\n", argv[0]);
 		fprintf(stderr, "\n");
 		fprintf(stderr, "INPUT ID: input pattern ID (0 - %lu)\n", PATTERN_NUM-1);
 		for(i=0; i<PATTERN_NUM; i++){
 			fprintf(stderr, "\t%d: %s\n", i, PATTERN_NAMES[i]);
 		}
 		fprintf(stderr, "NOISE LEVEL: noise level (0 - 100[%%])\n");
+		fprintf(stderr, "LOOP NUM: if given it, calc average of score.\n");
 		return -1;
 	}
 
 	input_id = atoi(argv[1]);
 	noise_level = atof(argv[2]) / 100.0;
+	if(argc > 3){
+		loop = atoi(argv[3]);
+	}
 
 	/* 引数が正しい範囲に収まっているかを確認。 */
 	if(input_id < 0 || PATTERN_NUM <= input_id){
@@ -234,29 +262,41 @@ int main(const int argc, const char *argv[]){
 		fprintf(stderr, "noise level is out of range.\n");
 		return -1;
 	}
+	if(loop < 1){
+		fprintf(stderr, "loop num must 1 or more.\n");
+		return -1;
+	}
 
 	srand(time(NULL));  /* 乱数生成器の初期化。 */
 
 	read_patterns(pattern);  /* 学習パターンの読み込み。 */
 	learn((const int (*)[PATTERN_SIZE])pattern, weight);  /* 相関学習 */
 
-	memcpy(out, pattern[input_id], PATTERN_SIZE * sizeof(int));  /* 入力パターンを出力用の配列にコピーする。 */
-	make_noise(out, noise_level);  /* 入力パターンにノイズを乗せる。 */
+	for(i=0; i<loop; i++){
+		memcpy(out, pattern[input_id], PATTERN_SIZE * sizeof(int));  /* 入力パターンを出力用の配列にコピーする。 */
+		make_noise(out, noise_level);  /* 入力パターンにノイズを乗せる。 */
 
-	display_pattern(out);  /* 入力パターンを表示する。 */
-
-	/* TRY_NUMの回数分だけ想起処理を行なう。 */
-	for(i=0; i<TRY_NUM; i++){
-		remember((const int (*)[PATTERN_SIZE])weight, out, OUTPUT_LEVEL >= 2);
-
-		if(OUTPUT_LEVEL >= 1){
-			display_pattern(out);  /* 各想起ごとの出力を表示する。 */
+		if(loop == 1){
+			display_pattern(out);  /* 入力パターンを表示する。 */
 		}
+
+		/* TRY_NUMの回数分だけ想起処理を行なう。 */
+		for(j=0; j<TRY_NUM; j++){
+			remember((const int (*)[PATTERN_SIZE])weight, out, OUTPUT_LEVEL >= 2);
+
+			if(OUTPUT_LEVEL >= 1 && loop == 1){
+				display_pattern(out);  /* 各想起ごとの出力を表示する。 */
+			}
+		}
+
+		if(OUTPUT_LEVEL == 0 && loop == 1){
+			display_pattern(out);  /* 最終的な出力を表示する。 */
+		}
+
+		score += calc_score(out, pattern[input_id]);
 	}
 
-	if(OUTPUT_LEVEL == 0){
-		display_pattern(out);  /* 最終的な出力を表示する。 */
-	}
+	printf("score: %0.2lf%%\n", score/loop*100);
 
 	return 0;
 }
