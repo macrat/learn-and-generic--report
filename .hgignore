@@ -1,6 +1,6 @@
 syntax: glob
 a.out
 *.tar.gz
-{BP,GA,Hopfield,SOM}/*.{log,png}
+{BP,GA,Hopfield,SOM}/*.{png,log,txt}
 report/*.{aux,dvi,pdf,log,toc}
 report/{BP,GA,Hopfield,SOM}.tex
