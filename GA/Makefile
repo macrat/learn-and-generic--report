@@ -82,3 +82,4 @@ compare:
 	gnuplot graph.plot
 	mv advance.log compare/rand-tournament.log
 	mv advance.png compare/rand-tournament.png
+	rm a.out
