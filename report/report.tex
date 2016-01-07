@@ -30,9 +30,20 @@
 \input{Hopfield}
 
 \section{実行結果}
-\lstinputlisting[caption=Hopfield.cの実行結果]{../Hopfield/output.log}
+パターンを6番、ノイズレベルを20\%に設定して実行した結果をリスト\ref{Hopfield_result}に示す。
+\lstinputlisting[caption=Hopfield.cの実行結果,label=Hopfield_result]{../Hopfield/output.log}
 
 \section{考察}
+パターン6（ペンギン）での入力のノイズレベルと想起の成功率の関係について検証を行なった。
+想起の成功率は正解と等しいビットの割合とし、各ノイズレベルについて2000回行なった平均とした。
+
+検証結果を図\ref{noise_success_rate}に示す。
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=\hsize]{Hopfield/error.png}
+		\caption{入力のノイズレベルと想起の成功率の関係\label{noise_success_rate}}
+	\end{center}
+\end{figure}
 
 
 \part{誤差逆伝播法}
