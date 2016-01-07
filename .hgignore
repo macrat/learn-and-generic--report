@@ -4,3 +4,4 @@ a.out
 {BP,GA,Hopfield,SOM}/*.{png,log,txt}
 report/*.{aux,dvi,pdf,log,toc}
 report/{BP,GA,Hopfield,SOM}.tex
+.DS_Store
