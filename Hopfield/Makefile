@@ -12,7 +12,7 @@ error.png: graph.plot error.txt
 
 error.txt: Makefile a.out
 	:> $@
-	for err in `seq 0 5 100`; do echo "$${err}%"; echo "$${err} `./a.out 6 $${err} 2000 | grep -o '[0-9][0-9.]*'`" >> $@; done
+	for err in `seq 0 2 100`; do echo "$${err}%"; echo "$${err} `./a.out 6 $${err} 2000 | grep -o '[0-9][0-9.]*'`" >> $@; done
 
 .PHONY: clean
 clean:

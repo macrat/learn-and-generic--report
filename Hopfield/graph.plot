@@ -8,5 +8,8 @@ set ylabel "success rate [%]"
 set xtic 10
 set ytic 10
 
+set grid
+
 set output "error.png"
-plot 100-100/(1+exp(-(x-50)/4)), "error.txt"
+#plot 100-100/(1+exp(-(x-50)/4)), "error.txt"
+plot "error.txt" w lp t ""
