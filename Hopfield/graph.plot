@@ -11,5 +11,4 @@ set ytic 10
 set grid
 
 set output "error.png"
-#plot 100-100/(1+exp(-(x-50)/4)), "error.txt"
-plot "error.txt" w lp t ""
+plot 100-100/(1+exp(-(x-49.97798491)/4.10077344)) w l, "error.txt" w p t "real data"
