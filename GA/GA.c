@@ -280,15 +280,17 @@ void show_gene(const int gene[GENE_LENGTH]){
  * 一世代全ての遺伝子の情報を表示する。
  * show_gene関数で表示される情報に加え、その世代における最大、最小、平均などの値も表示される。
  *
+ * generation_id: 何世代目かを表わす番号。表示に使われるだけ。ゼロオリジンを想定している（=表示の時に+1される）ので注意。
  * genes: 表示したい遺伝子の配列。
  */
-void show_generation(const int genes[GENE_NUM][GENE_LENGTH]){
+void show_generation(const int generation_id, const int genes[GENE_NUM][GENE_LENGTH]){
 	int i;
 
 	for(i=0; i<GENE_NUM; i++){
 		show_gene(genes[i]);
 	}
 
+	printf("generation: %d\n", generation_id + 1);
 	printf("max: %d%%\n", calc_fitness(find_max_fitness(genes))*100/GENE_LENGTH);
 	printf("min: %d%%\n", calc_fitness(find_min_fitness(genes))*100/GENE_LENGTH);
 	printf("average: %d%%\n", sum_fitness(genes)*100/GENE_NUM/GENE_LENGTH);
@@ -365,7 +367,7 @@ int main(const int argc, const char* argv[]){
 	srand(time(NULL));  /* 乱数生成器の初期化 */
 
 	make_genes(genes);  /* 第一世代を生成 */
-	show_generation((const int (*)[GENE_LENGTH])genes);  /* 作った世代を表示する */
+	show_generation(0, (const int (*)[GENE_LENGTH])genes);  /* 作った世代を表示する */
 	printf("\n");
 
 	write_log(log_file, adv_log_file, (const int (*)[GENE_LENGTH])genes);
@@ -392,7 +394,7 @@ int main(const int argc, const char* argv[]){
 
 #ifdef SHOW_VERBOSE
 		/* 新しく出来た世代の遺伝子を表示。 */
-		show_generation((const int (*)[GENE_LENGTH])genes);
+		show_generation(i, (const int (*)[GENE_LENGTH])genes);
 		printf("\n");
 #endif
 
@@ -401,7 +403,7 @@ int main(const int argc, const char* argv[]){
 
 #ifndef SHOW_VERBOSE
 	/* 計算結果を表示。 */
-	show_generation((const int (*)[GENE_LENGTH])genes);
+	show_generation(i, (const int (*)[GENE_LENGTH])genes);
 #endif
 
 	fclose(log_file);
