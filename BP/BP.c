@@ -260,6 +260,7 @@ int main(const int argc, const char *argv[]){
 
 
 	/* 計算して結果を出力する。 */
+	double score = 0;
 	for(p=0; p<INPUT_PATTERN_NUM; p++){
 		forward_propagation(
 			input[p],
@@ -269,12 +270,15 @@ int main(const int argc, const char *argv[]){
 			o_out
 		);
 
+		score += fabs(output[p][0] - o_out[0]);
+
 		printf("[%d] %lf %lf ===> %lf (%lf)\n",
 			p,
 			input[p][0], input[p][1],
 			o_out[0], output[p][0]
 		);
 	}
+	printf("\nscore: %lf\n", score / (double)INPUT_PATTERN_NUM);
 
 
 	return 0;
