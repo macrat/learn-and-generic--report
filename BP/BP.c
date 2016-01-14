@@ -204,7 +204,8 @@ void back_propagation(
 
 
 /** メイン関数
- * 学習に使用するデータファイルの名前を引数で受け取り、誤差逆伝播法で学習、学習結果を表示する。
+ * 学習に使用するデータファイルの名前を引数で受け取り、誤差逆伝播法で学習、学習結果とそのスコアを表示する。
+ * スコアは期待する出力との差の合計であり、小さいほど実際の出力と教師データが近いことを示す。
  */
 int main(const int argc, const char *argv[]){
 	double weight_i2h[HIDDEN_NEURON_NUM][INPUT_NEURON_NUM+1];  /* 入力層から中間層への重み */		
