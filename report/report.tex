@@ -59,9 +59,36 @@
 \input{BP}
 
 \section{実行結果}
-\lstinputlisting[caption=BP.cの実行結果の例]{../BP/output.log}
+上記プログラムにリスト\ref{BP_input_digital}に示すXORのパターンを入力した場合の出力結果をリスト\ref{BP_output}に示す。
+\lstinputlisting[caption=使用した入力パターン,label=BP_input_digital]{../BP/xor.dat}
+\lstinputlisting[caption=BP.cの実行結果の例,label=BP_output]{../BP/output.log}
+
+また、実行時のエラーレベルの推移を図\ref{BP_error_level}に示す。
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=\hsize]{../BP/error.png}
+		\caption{エラーレベルの推移\label{BP_error_level}}
+	\end{center}
+\end{figure}
 
 \section{考察}
+作成したプログラムに対し、前掲した1か0のみのデジタル値からなる入力パターン（リスト\ref{BP_input_digital}）と、入力を0から1までのアナログにしたパターン（リスト\ref{BP_input_analog}）の二種類を入力し、出力のスコアを比較した。
+なお、デジタル値での入力パターン数が4パターンなのに対しアナログでは100パターンと多く用意したため1回のループでの学習量がアナログの時の方が多いと考え、学習回数をデジタルで350000回に対しアナログでは3500回と設定した。
+\lstinputlisting[caption=アナログ値によるXORの入力パターン（先頭10行のみ）,label=BP_input_analog]{BP/analog_xor_head.dat}
+
+上記のデジタル・アナログ二種の入力を行なった計算を100回行ないスコアの平均を計算したところ、デジタルで$0.168025$、アナログで$0.379443$となった。
+アナログでの入力を行なった場合のエラーレベルの推移を図\ref{BP_analog_error}に示す。
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=\hsize]{BP/analog_error.png}
+		\caption{アナログで入力した場合のエラーレベルの推移\label{BP_analog_error}}
+	\end{center}
+\end{figure}
+図\ref{BP_error_level}と図\ref{BP_analog_error}を比較すると、デジタルで入力した場合の図\ref{BP_error_level}に比べアナログで入力した場合の図\ref{BP_analog_error}の方が最大、最小ともに高く、また差も広いことが分かる。
+デジタルでの入力ではパターン数が多いため学習回数を減らしたが、学習が急激に発生する点（図\ref{BP_analog_error}では1500回前後）が早い時点に移動することは無かった。
+すなわち、入力に誤差に入る誤差が増えると学習に掛かる時間が増加するものと考えられる。
+
+これは、境目付近のデータが入ったことで、学習効率が低下したことが原因と思われる。
 
 
 \part{自己組織化マップ}

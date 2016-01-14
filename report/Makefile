@@ -10,7 +10,7 @@ all: report.pdf
 report.pdf: report.dvi
 	${DVIPDF} $<
 
-report.dvi: report.tex ${SOURCODES} ${OUTPUT_LOGS} BP.tex GA.tex Hopfield.tex SOM.tex
+report.dvi: report.tex ${SOURCODES} ${OUTPUT_LOGS} BP.tex GA.tex Hopfield.tex SOM.tex BP/analog_xor_head.dat
 	${TEX} $<
 	${TEX} $<
 	${TEX} $<
@@ -32,6 +32,9 @@ Hopfield.tex: ../Hopfield/Hopfield.c docstring.py
 
 SOM.tex: ../SOM/SOM.c docstring.py
 	python docstring.py ../SOM/SOM.c > SOM.tex
+
+BP/analog_xor_head.dat: ../BP/analog_xor.dat
+	head -n 10 $< > BP/analog_xor_head.dat
 
 .PHONY: clean
 clean:
