@@ -16,7 +16,7 @@ report.dvi: report.tex ${SOURCODES} ${OUTPUT_LOGS} BP.tex GA.tex Hopfield.tex SO
 	${TEX} $<
 
 ${OUTPUT_LOGS}: ${SOURCODES}
-	cd ../BP/ && make output.log
+	cd ../BP/ && make output.log error.png
 	cd ../GA/ && make output.log
 	cd ../Hopfield/ && make output.log
 	cd ../SOM/ && make output.log
@@ -34,6 +34,7 @@ SOM.tex: ../SOM/SOM.c docstring.py
 	python docstring.py ../SOM/SOM.c > SOM.tex
 
 BP/analog_xor_head.dat: ../BP/analog_xor.dat
+	-mkdir BP
 	head -n 10 $< > BP/analog_xor_head.dat
 
 .PHONY: clean
